@@ -115,7 +115,7 @@ namespace WorkShop.Models
         /// <summary>
         /// 訂單明細
         /// </summary>
-        //public List<OrderDetails> OrderDetails { get; set; }
+        public List<OrderDetails> OrderDetails { get; set; }
         public List<Order> OrderList { get; set; }
     }
 }

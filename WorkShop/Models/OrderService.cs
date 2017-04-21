@@ -37,6 +37,117 @@ namespace WorkShop.Models
             }
             return this.MapShipperDataToList(dataTable);
         }
+
+        /// <summary>
+        /// 取得產品資料
+        /// </summary>
+        /// <returns></returns>
+        public List<Models.OrderDetails> GetProductData()
+        {
+            DataTable dataTable = new DataTable();
+            string sql = @"Select ProductID, ProductName
+                            From Production.Products";
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
+                sqlAdapter.Fill(dataTable);
+                conn.Close();
+            }
+            return this.MapProductDataToList(dataTable);
+        }
+        /// <summary>
+        /// 取得產品資料變成List
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        private List<OrderDetails> MapProductDataToList(DataTable dataTable)
+        {
+            List<Models.OrderDetails> result = new List<OrderDetails>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                result.Add(new OrderDetails
+                {
+                    ProductID = (int)row["ProductID"],
+                    ProductName = row["ProductName"].ToString(),
+                });
+            }
+            return result;
+        }
+        /// <summary>
+        /// 獲取單價
+        /// </summary>
+        /// <returns></returns>
+        public List<Models.OrderDetails> GetPriceData()
+        {
+            DataTable dataTable = new DataTable();
+            string sql = @"Select UnitPrice
+                           From Production.Products";
+
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
+                sqlAdapter.Fill(dataTable);
+                conn.Close();
+            }
+            return this.MapUntiPriceToList(dataTable);
+        }
+        /// <summary>
+        /// 取得產品價格
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        private List<OrderDetails> MapUntiPriceToList(DataTable dataTable)
+        {
+            List<Models.OrderDetails> result = new List<OrderDetails>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                result.Add(new OrderDetails
+                {
+                    UnitPrice = row["UnitPrice"].ToString(),
+                });
+            }
+            return result;
+        }
+        /// <summary>
+        /// 取得客戶資料
+        /// </summary>
+        /// <returns></returns>
+        public List<Models.Order> GetCustomerData()
+        {
+            DataTable dataTable = new DataTable();
+            string sql = @"Select CustomerID, CompanyName
+                            From Sales.Customers";
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
+                sqlAdapter.Fill(dataTable);
+                conn.Close();
+            }
+            return this.MapCustomerDataToList(dataTable);
+        } /// <summary>
+          /// 取得客戶資料變成List
+          /// </summary>
+          /// <param name="dataTable"></param>
+          /// <returns></returns>
+        private List<Order> MapCustomerDataToList(DataTable dataTable)
+        {
+            List<Models.Order> result = new List<Order>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                result.Add(new Order
+                {
+                    CustomerID = (int)row["CustomerID"],
+                    CustomerName = row["CompanyName"].ToString()
+                });
+            }
+            return result;
+        }
         /// <summary>
         /// 取得員工資料
         /// </summary>
@@ -147,6 +258,77 @@ namespace WorkShop.Models
             }
             return this.MapOrderDataToList(dataTable);
         }
+
+
+
+        /// <summary>
+        /// 新增訂單
+        /// </summary>
+        /// <param name="order"></param>
+        public string InsertOrder(Models.Order order)
+        {
+            string sql = @"Insert INTO Sales.Orders
+                         (
+                            CustomerID,EmployeeID,OrderDate,RequiredDate,ShippedDate,ShipperID,Freight,
+                            ShipCountry,ShipCity,ShipRegion,ShipPostalCode,ShipAddress,ShipName
+                         )
+                         VALUES
+                         (
+                            @CustomerID,@EmployeeID,@OrderDate,@RequiredDate,@ShippedDate,@ShipperID,@Freight,
+                            @ShipCountry,@ShipCity,@ShipRegion,@ShipPostalCode,@ShipAddress,@ShipName
+                         )
+                         Select SCOPE_IDENTITY()
+                         ";
+
+            string sql2 = @"Insert INTO Sales.OrderDetails
+                         (
+                            OrderID,ProductID,UnitPrice,Qty,Discount
+                         )
+                        
+                         VALUES
+                         (
+                            @OrderID,@ProductID,@UnitPrice,@Qty,@Discount
+                         )
+                         ";
+
+            string OrderID;
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd2 = new SqlCommand(sql2, conn);
+                cmd.Parameters.Add(new SqlParameter("@CustomerID", order.CustomerID));
+                cmd.Parameters.Add(new SqlParameter("@EmployeeID", order.EmployeeID));
+                cmd.Parameters.Add(new SqlParameter("@OrderDate", order.OrderDate == null ? (object)DBNull.Value : order.OrderDate));
+                cmd.Parameters.Add(new SqlParameter("@RequiredDate", order.RequiredDate == null ? (object)DBNull.Value : order.RequiredDate));
+                cmd.Parameters.Add(new SqlParameter("@ShippedDate", order.ShippedDate == null ? (object)DBNull.Value : order.ShippedDate));
+                cmd.Parameters.Add(new SqlParameter("@ShipperID", order.ShipperID));
+                cmd.Parameters.Add(new SqlParameter("@Freight", order.Freight ?? string.Empty));
+                cmd.Parameters.Add(new SqlParameter("@ShipCountry", order.ShipCountry ?? string.Empty));
+                cmd.Parameters.Add(new SqlParameter("@ShipCity", order.ShipCity ?? string.Empty));
+                cmd.Parameters.Add(new SqlParameter("@ShipRegion", order.ShipRegion == null ? (object)DBNull.Value : order.ShipRegion));
+                cmd.Parameters.Add(new SqlParameter("@ShipPostalCode", order.ShipPostalCode == null ? (object)DBNull.Value : order.ShipPostalCode));
+                cmd.Parameters.Add(new SqlParameter("@ShipAddress", order.ShipAddress ?? string.Empty));
+                cmd.Parameters.Add(new SqlParameter("@ShipName", order.ShipName ?? string.Empty));
+
+                OrderID = cmd.ExecuteScalar().ToString();
+
+                for (int i = 0; i < order.OrderDetails.Count; i++)
+                {
+                    cmd2 = new SqlCommand(sql2, conn);
+                    cmd2.Parameters.Add(new SqlParameter("@OrderID", OrderID));
+                    cmd2.Parameters.Add(new SqlParameter("@ProductID", order.OrderDetails[i].ProductID));
+                    cmd2.Parameters.Add(new SqlParameter("@UnitPrice", order.OrderDetails[i].UnitPrice));
+                    cmd2.Parameters.Add(new SqlParameter("@Qty", order.OrderDetails[i].Qty));
+                    cmd2.Parameters.Add(new SqlParameter("@Discount", order.OrderDetails[i].Discount));
+                    cmd2.ExecuteNonQuery();
+                }
+
+                conn.Close();
+            }
+            return OrderID;
+        }
+
         /// <summary>
         /// 刪除訂單
         /// </summary>
