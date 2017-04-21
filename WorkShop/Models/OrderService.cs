@@ -147,6 +147,36 @@ namespace WorkShop.Models
             }
             return this.MapOrderDataToList(dataTable);
         }
+        /// <summary>
+        /// 刪除訂單
+        /// </summary>
+        public void DeleteOrderById(string OrderID)
+        {
+            try
+            {
+                string sql = @"DELETE
+                               FROM Sales.OrderDetails
+                               Where OrderID = @OrderID";
+                string sql2 = @"DELETE
+                               FROM Sales.Orders
+                               Where OrderID = @OrderID";
+                using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    SqlCommand cmd2 = new SqlCommand(sql2, conn);
+                    cmd.Parameters.Add(new SqlParameter("OrderID", OrderID));
+                    cmd.ExecuteNonQuery();
+                    cmd2.Parameters.Add(new SqlParameter("OrderID", OrderID));
+                    cmd2.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
     }
 }

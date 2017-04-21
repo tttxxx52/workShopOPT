@@ -58,5 +58,18 @@ namespace WorkShop.Controllers
             List<Models.Order> list = orderService.SearchOrder(order);
             return this.Json(list);
         }
+
+        /// <summary>
+        /// 刪除訂單
+        /// </summary>
+        /// <param name="OrderID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult DoDelete(string OrderID)
+        {
+            Models.OrderService orderService = new Models.OrderService();
+            orderService.DeleteOrderById(OrderID);
+            return RedirectToAction("Index");
+        }
     }
 }
