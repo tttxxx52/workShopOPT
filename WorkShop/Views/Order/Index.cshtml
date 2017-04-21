@@ -25,7 +25,7 @@
                         item.ShippedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
                     }
                     $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
-                                                "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/GetOrder/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
+                                                "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/Order/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
                 });
             },
             error: function (xhr) {
@@ -37,7 +37,7 @@
 
     function DoDelete(OrderID) {
         $.ajax({
-            url: "/GetOrder/DoDelete",
+            url: "/Order/DoDelete",
             type: "Get",
             data: { OrderID: OrderID },
         });
@@ -50,7 +50,7 @@
 </script>
 
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("GetData", "OrderController", FormMethod.Post, new { @id = "orderForm" }))
     {
         <div class="form-horizontal">
             @Html.AntiForgeryToken()
