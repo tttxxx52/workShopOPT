@@ -1,0 +1,108 @@
+﻿@model WorkShop.Models.Order
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript">
+    function Submit() {
+        $.ajax({
+            url: "/Order/GetData",
+            type: "POST",
+            data: $('#orderForm').serialize(),
+            dataType: "JSON",
+            success: function (msg) {
+                $('#resultTable').children().remove();
+                $('#resultTable').append("<tr><td>訂單編號</td><td>客戶名稱</td><td>訂購日期</td><td>出貨日期</td><td></td><td></td></tr>");
+                var date;
+                $.each(msg, function (i, item) {
+                    date = new Date(parseInt(item.OrderDate.substr(6)));
+                    item.OrderDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                    if (item.ShippedDate != null) {
+                        date = new Date(parseInt(item.ShippedDate.substr(6)));
+                        item.ShippedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                    }
+                    $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
+                                                "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/GetOrder/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
+                });
+            },
+            error: function (xhr) {
+                alert(xhr.status);
+            }
+        });
+        document.getElementById("resultDiv").style.display = "";
+    }
+
+    function DoDelete(OrderID) {
+        $.ajax({
+            url: "/GetOrder/DoDelete",
+            type: "Get",
+            data: { OrderID: OrderID },
+        });
+
+        $('#resultTable').on('click', '.deleteData', function () {
+            $(this).closest('tr').remove();
+        });
+    }
+
+</script>
+
+
+    @using (Html.BeginForm())
+    {
+        <div class="form-horizontal">
+            @Html.AntiForgeryToken()
+            <h3>查詢訂單</h3>
+            <table class="table table-bordered">
+                <tr>
+                    <td>訂單編號</td>
+                    <td colspan="4">@Html.TextBoxFor(model => model.OrderID)</td>
+                </tr>
+                <tr>
+                    <td>客戶名稱</td>
+                    <td colspan="4">@Html.TextBoxFor(model => model.CustomerID)</td>
+                </tr>
+                <tr>
+                    <td>負責員工</td>
+                    <td colspan="4">@Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty)</td>
+                </tr>
+                <tr>
+                    <td>出貨公司</td>
+                    <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)</td>
+                </tr>
+                <tr>
+                    <td>訂購日期</td>
+                    <td>@Html.TextBoxFor(model => model.OrderDate, new { @type = "date" })</td>
+                    <td>出貨日期</td>
+                    <td>@Html.TextBoxFor(model => model.ShippedDate, new { @type = "date" })</td>
+                </tr>
+                <tr>
+                    <td>需要日期</td>
+                    <td colspan="4">@Html.TextBoxFor(model => model.RequiredDate, new { @type = "date" })</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="4">
+                        <input type="button" value="查詢" onclick="Submit()">
+                        <input type="reset" value="清除" onclick="Back()">
+                        <a href="/Order/InsertPage">新增訂單</a>
+                    </td>
+                </tr>
+            </table>
+
+            <div id="resultDiv" style="display:none">
+                <form id="detailForm">
+                    <table id="resultTable" class="table table-bordered"></table>
+                </form>
+            </div>
+
+
+        </div>
+
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+        }
+    }
+

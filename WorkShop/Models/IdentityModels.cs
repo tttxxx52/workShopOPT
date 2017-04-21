@@ -29,5 +29,7 @@ namespace WorkShop.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<WorkShop.Models.Order> Orders { get; set; }
     }
 }
