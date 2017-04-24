@@ -18,25 +18,7 @@ namespace WorkShop.Models
             return
                 System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
         }
-        /// <summary>
-        /// 取得供應商資料
-        /// </summary>
-        /// <returns></returns>
-        public List<Models.Order> GetShipperData()
-        {
-            DataTable dataTable = new DataTable();
-            string sql = @"Select ShipperID, CompanyName As ShipperName
-                           From Sales.Shippers";
-            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
-                sqlAdapter.Fill(dataTable);
-                conn.Close();
-            }
-            return this.MapShipperDataToList(dataTable);
-        }
+
 
         /// <summary>
         /// 取得產品資料
@@ -96,7 +78,7 @@ namespace WorkShop.Models
             return this.MapUntiPriceToList(dataTable);
         }
         /// <summary>
-        /// 取得產品價格
+        /// 取得產品價格變成List
         /// </summary>
         /// <param name="dataTable"></param>
         /// <returns></returns>
@@ -161,31 +143,13 @@ namespace WorkShop.Models
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand(sql, conn);
-
                 SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
                 sqlAdapter.Fill(dataTable);
                 conn.Close();
             }
             return this.MapEmployeeDataToList(dataTable);
         }
-        /// <summary>
-        /// 取得供應商資料變成List
-        /// </summary>
-        /// <param name="dataTable"></param>
-        /// <returns></returns>
-        private List<Order> MapShipperDataToList(DataTable dataTable)
-        {
-            List<Models.Order> result = new List<Order>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                result.Add(new Order
-                {
-                    ShipperID = (int)row["ShipperID"],
-                    ShipperName = row["ShipperName"].ToString()
-                });
-            }
-            return result;
-        }
+
         /// <summary>
         /// 取得員工資料變成List
         /// </summary>
@@ -204,22 +168,41 @@ namespace WorkShop.Models
             }
             return result;
         }
+
         /// <summary>
-        /// 取得訂單資料變成List
+        /// 取得供應商資料
+        /// </summary>
+        /// <returns></returns>
+        public List<Models.Order> GetShipperData()
+        {
+            DataTable dataTable = new DataTable();
+            string sql = @"Select ShipperID, CompanyName As ShipperName
+                           From Sales.Shippers";
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
+                sqlAdapter.Fill(dataTable);
+                conn.Close();
+            }
+            return this.MapShipperDataToList(dataTable);
+        }
+
+        /// <summary>
+        /// 取得供應商資料變成List
         /// </summary>
         /// <param name="dataTable"></param>
         /// <returns></returns>
-        private List<Order> MapOrderDataToList(DataTable dataTable)
+        private List<Order> MapShipperDataToList(DataTable dataTable)
         {
             List<Models.Order> result = new List<Order>();
             foreach (DataRow row in dataTable.Rows)
             {
                 result.Add(new Order
                 {
-                    OrderID = (int)row["OrderID"],
-                    CustomerName = row["CustomerName"].ToString(),
-                    OrderDate = (DateTime)row["OrderDate"],
-                    ShippedDate = row["ShippedDate"] == DBNull.Value ? (DateTime?)null : (DateTime)row["ShippedDate"]
+                    ShipperID = (int)row["ShipperID"],
+                    ShipperName = row["ShipperName"].ToString()
                 });
             }
             return result;
@@ -260,7 +243,26 @@ namespace WorkShop.Models
             return this.MapOrderDataToList(dataTable);
         }
 
-
+        /// <summary>
+        /// 取得訂單資料變成List
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        private List<Order> MapOrderDataToList(DataTable dataTable)
+        {
+            List<Models.Order> result = new List<Order>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                result.Add(new Order
+                {
+                    OrderID = (int)row["OrderID"],
+                    CustomerName = row["CustomerName"].ToString(),
+                    OrderDate = (DateTime)row["OrderDate"],
+                    ShippedDate = row["ShippedDate"] == DBNull.Value ? (DateTime?)null : (DateTime)row["ShippedDate"]
+                });
+            }
+            return result;
+        }
 
         /// <summary>
         /// 新增訂單

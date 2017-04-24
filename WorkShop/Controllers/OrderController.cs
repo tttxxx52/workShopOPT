@@ -13,12 +13,10 @@ namespace WorkShop.Controllers
         public ActionResult Index()
         {
             Models.OrderService orderService = new Models.OrderService();
-
             List<Models.Order> dataList = orderService.GetEmployeeData();
-    
-
             List<SelectListItem> employeeList = new List<SelectListItem>();
             List<SelectListItem> shipperList = new List<SelectListItem>();
+
             //員工List
             foreach (var item in dataList)
             {
@@ -45,6 +43,7 @@ namespace WorkShop.Controllers
             ViewBag.shipperData = shipperList;
             return View();
         }
+
         /// <summary>
         /// 回傳訂單資料
         /// </summary>
@@ -53,7 +52,6 @@ namespace WorkShop.Controllers
         [HttpPost()]
         public JsonResult GetData(Models.Order order)
         {
-
             Models.OrderService orderService = new Models.OrderService();
             List<Models.Order> list = orderService.SearchOrder(order);
             return this.Json(list);
