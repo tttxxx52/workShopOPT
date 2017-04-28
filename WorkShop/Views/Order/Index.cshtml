@@ -39,7 +39,7 @@
         $.ajax({
             url: "/Order/DoDelete",
             type: "Get",
-            data: { OrderID: OrderID },
+            data: {OrderID},
         });
 
         $('#resultTable').on('click', '.deleteData', function () {
@@ -62,7 +62,7 @@
                 </tr>
                 <tr>
                     <td>客戶名稱</td>
-                    <td colspan="4">@Html.TextBoxFor(model => model.CustomerID)</td>
+                    <td colspan="4">@Html.TextBoxFor(model => model.CustomerName)</td>
                 </tr>
                 <tr>
                     <td>負責員工</td>
@@ -87,22 +87,23 @@
                     <td colspan="4">
                         <input type="button" value="查詢" onclick="Submit()">
                         <input type="reset" value="清除" onclick="Back()">
-                        <a href="/Order/InsertPage">新增訂單</a>
+                        <input type="reset" value="新增" onclick=" location.href='/Order/InsertPage'">
+                       
                     </td>
                 </tr>
             </table>
 
             <div id="resultDiv" style="display:none">
                 <form id="detailForm">
-                    <table id="resultTable" class="table table-bordered"></table>
+                    <table id="resultTable" class="table table-striped"></table>
                 </form>
             </div>
 
 
         </div>
-
+        //<a href="/Order/InsertPage">新增訂單</a>
         @section Scripts {
             @Scripts.Render("~/bundles/jqueryval")
         }
-    }
+}
 

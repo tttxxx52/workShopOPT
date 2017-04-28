@@ -166,7 +166,7 @@ namespace WorkShop.Controllers
         }
 
         /// <summary>
-        /// 修改訂單頁面
+        /// 修改訂單頁面 (get)
         /// </summary>
         /// <param name="OrderID"></param>
         /// <returns></returns>
@@ -264,13 +264,15 @@ namespace WorkShop.Controllers
             ViewBag.UnitPrice = unitpriceList;
 
             ViewBag.orderData = order;
-
+            //Convert將基底資料類型轉換為其他基底資料類型
             DateTime orderdate = Convert.ToDateTime(order.OrderDate);
             ViewBag.OrderDate = (orderdate.ToString("yyyy-MM-dd"));
             DateTime requireDdate = Convert.ToDateTime(order.RequiredDate);
             ViewBag.RequireDdate = (requireDdate.ToString("yyyy-MM-dd"));
             DateTime shippedDate = Convert.ToDateTime(order.ShippedDate);
             ViewBag.ShippedDate = (shippedDate.ToString("yyyy-MM-dd"));
+          
+
             ViewBag.OrderDetails = orderdetails;
             return View();
         }
