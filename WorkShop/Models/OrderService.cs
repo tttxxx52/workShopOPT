@@ -215,7 +215,7 @@ namespace WorkShop.Models
         public List<Models.Order> SearchOrder(Models.Order order)
         {
             DataTable dataTable = new DataTable();
-            string sql = @"Select OrderID, CompanyName AS CustomerName,  OrderDate, ShippedDate
+            string sql = @"Select OrderID, CompanyName AS CustomerName,  CONVERT(VARCHAR,OrderDate,23) as OrderDate, CONVERT(VARCHAR,ShippedDate,23) as ShippedDate
                             From Sales.Orders O join Sales.Customers C on O.CustomerID = C.CustomerID 
                             Where (OrderID = @OrderID OR @OrderID = 0)
                               AND (CompanyName = @CompanyName OR @CompanyName IS NULL)
@@ -257,8 +257,8 @@ namespace WorkShop.Models
                 {
                     OrderID = (int)row["OrderID"],
                     CustomerName = row["CustomerName"].ToString(),
-                    OrderDate = (DateTime)row["OrderDate"],
-                    ShippedDate = row["ShippedDate"] == DBNull.Value ? (DateTime?)null : (DateTime)row["ShippedDate"]
+                    OrderDate = row["OrderDate"].ToString(),
+                    ShippedDate = row["ShippedDate"] == DBNull.Value ? null : row["ShippedDate"].ToString()
                 });
             }
             return result;
@@ -494,9 +494,9 @@ namespace WorkShop.Models
                 result.CustomerName = row["CustomerName"].ToString();
                 result.EmployeeID = (int)row["EmployeeID"];
                 result.EmployeeName = row["EmployeeName"].ToString();
-                result.OrderDate = (DateTime)row["OrderDate"];
+                result.OrderDate = row["OrderDate"].ToString();
                 result.RequiredDate = (DateTime)row["RequiredDate"];
-                result.ShippedDate = row["ShippedDate"] == DBNull.Value ? (DateTime?)null : (DateTime)row["ShippedDate"];
+                result.ShippedDate = row["ShippedDate"] == DBNull.Value ? null : row["ShippedDate"].ToString();
                 result.ShipperID = (int)row["ShipperID"];
                 result.ShipperName = row["ShipperName"].ToString();
                 result.Freight = row["Freight"].ToString();

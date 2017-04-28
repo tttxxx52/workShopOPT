@@ -11,19 +11,19 @@
         $.ajax({
             url: "/Order/GetData",
             type: "POST",
-            data: $('#orderForm').serialize(),
+            data: $('#orderForm').serialize(), //傳直到/order/getdata
             dataType: "JSON",
             success: function (msg) {
                 $('#resultTable').children().remove();
                 $('#resultTable').append("<tr><td>訂單編號</td><td>客戶名稱</td><td>訂購日期</td><td>出貨日期</td><td></td><td></td></tr>");
                 var date;
                 $.each(msg, function (i, item) {
-                    date = new Date(parseInt(item.OrderDate.substr(6)));
-                    item.OrderDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    if (item.ShippedDate != null) {
-                        date = new Date(parseInt(item.ShippedDate.substr(6)));
-                        item.ShippedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    }
+                    //date = new Date(parseInt(item.OrderDate.substr(6)));
+                    //item.OrderDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                    //if (item.ShippedDate != null) {
+                    //    date = new Date(parseInt(item.ShippedDate.substr(6)));
+                    //    item.ShippedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                    //}
                     $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
                                                 "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/Order/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
                 });

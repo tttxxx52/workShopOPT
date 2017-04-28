@@ -44,7 +44,7 @@ namespace WorkShop.Models
         /// 訂單日期
         /// </summary>
         [DisplayName("訂單日期")]
-        public DateTime? OrderDate { get; set; }
+        public string  OrderDate { get; set; }
 
         /// <summary>
         /// 需要日期
@@ -56,7 +56,7 @@ namespace WorkShop.Models
         /// 出貨日期
         /// </summary>
         [DisplayName("出貨日期")]
-        public DateTime? ShippedDate { get; set; }
+        public string ShippedDate { get; set; }
 
         /// <summary>
         /// 出貨公司代號
