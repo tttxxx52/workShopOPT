@@ -65,7 +65,7 @@ namespace WorkShop.Controllers
         /// <param name="OrderID"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult DoDelete(string OrderID)
+        public ActionResult DoDelete(string OrderID, string B)
         {
             Models.OrderService orderService = new Models.OrderService();
             orderService.DeleteOrderById(OrderID);
