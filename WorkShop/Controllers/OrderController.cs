@@ -291,5 +291,11 @@ namespace WorkShop.Controllers
         }
 
 
+        public ActionResult test()
+        {
+            return View();
+        }
+
+
     }
 }

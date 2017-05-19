@@ -8,6 +8,15 @@
 
 
 <script>
+    $(document).ready(function () {
+        // create NumericTextBox from input HTML element
+        $("#OrderDate").kendoDatePicker();
+        $("#ShippedDate").kendoDatePicker();
+        $("#RequiredDate").kendoDatePicker();
+        
+        
+    });
+
     //$(function () {
     //$("#grid").kendoGrid({
     //    columns: [
@@ -19,9 +28,6 @@
     //});
     //document.ready(function () {
     //});
-
-
-
     function Submit() {
         $.ajax({
             url: "/Order/GetData",
@@ -64,10 +70,7 @@
         // get the data bound to the current table row
         var data = this.dataItem(tr);
         var OrderID = data.OrderID;
-
         location.href = "/Order/UpdatePage?OrderID=" + OrderID;
-
-
     }
 
 
@@ -166,8 +169,6 @@
                                 title: "修改",
                             },
 
-
-
                                {
                                    command: {
                                        text: "刪除",
@@ -178,8 +179,6 @@
                                    headerAttributes: { style: "text-align:center;vertical-align:middle" },
                                    title: "刪除",
                                }
-
-
                     ],
                     //record製作Grid的序號
                     dataBinding: function () {
@@ -202,10 +201,10 @@
     <div class="form-horizontal">
         @Html.AntiForgeryToken()
         <h3>查詢訂單</h3>
-        <table class="table table-bordered">
+        <table  class="table table-bordered">
             <tr>
                 <td>訂單編號</td>
-                <td colspan="4">@Html.TextBoxFor(model => model.OrderID)</td>
+                <td colspan="4">@Html.TextBoxFor(model => model.OrderID, new { @class = "k-textbox" })</td>
             </tr>
             <tr>
                 <td>客戶名稱</td>
@@ -217,7 +216,7 @@
             </tr>
             <tr>
                 <td>出貨公司</td>
-                <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)</td>
+                <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty, new { @class = "k-" })</td>
             </tr>
             <tr>
                 <td>訂購日期</td>
@@ -235,11 +234,12 @@
                     <input type="button" value="查詢" onclick="Submit()">
                     <input type="button" value="go" onclick="go()">
                     <input type="reset" value="清除" onclick="Back()">
-                    <input type="reset" value="新增" onclick=" location.href='/Order/InsertPage' ">
-
+                    <input type="reset" value="新增" onclick= location.href='/Order/InsertPage' >
                 </td>
             </tr>
         </table>
+
+
         <div id="grid"></div>
         <div id="resultDiv" style="display:none">
             <form id="detailForm">
@@ -249,7 +249,7 @@
 
 
     </div>
-    //<a href="/Order/InsertPage">新增訂單</a>
 
+    //<a href="/Order/InsertPage">新增訂單</a>
 }
 
