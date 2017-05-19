@@ -23,7 +23,12 @@
                 dataSource: empData
             });
  
-
+        $("#ShipperID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: empData
+        });
     });
 
     //$(function () {
