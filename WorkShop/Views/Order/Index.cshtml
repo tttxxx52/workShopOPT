@@ -9,12 +9,21 @@
 
 <script>
     $(document).ready(function () {
+        var empData = @Html.Raw(Json.Encode(ViewBag.empData2));
         // create NumericTextBox from input HTML element
         $("#OrderDate").kendoDatePicker();
         $("#ShippedDate").kendoDatePicker();
         $("#RequiredDate").kendoDatePicker();
-        
-        
+        debugger;
+ 
+        $("#EmployeeID").kendoDropDownList({
+                dataTextField: "Text",
+                dataValueField: "Value",
+                optionLabel: "請選擇",
+                dataSource: empData
+            });
+ 
+
     });
 
     //$(function () {
@@ -210,13 +219,14 @@
                 <td>客戶名稱</td>
                 <td colspan="4">@Html.TextBoxFor(model => model.CustomerName)</td>
             </tr>
+
             <tr>
                 <td>負責員工</td>
-                <td colspan="4">@Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty)</td>
+                <td colspan="4">@Html.DropDownListFor(model => model.EmployeeID , (List<SelectListItem>)ViewBag.empData, string.Empty)</td>
             </tr>
             <tr>
                 <td>出貨公司</td>
-                <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty, new { @class = "k-" })</td>
+                <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)</td>
             </tr>
             <tr>
                 <td>訂購日期</td>
@@ -231,10 +241,10 @@
             <tr>
                 <td></td>
                 <td colspan="4">
-                    <input type="button" value="查詢" onclick="Submit()">
-                    <input type="button" value="go" onclick="go()">
-                    <input type="reset" value="清除" onclick="Back()">
-                    <input type="reset" value="新增" onclick= location.href='/Order/InsertPage' >
+                    <input type="button" value="查詢" onclick="Submit()" class="k-button">
+                    <input type="button" value="go" onclick="go()" class="k-button">
+                    <input type="reset" value="清除" onclick="Back()" class="k-button" >
+                    <input type="reset" value="新增" class="k-button" onclick= location.href='/Order/InsertPage' >
                 </td>
             </tr>
         </table>

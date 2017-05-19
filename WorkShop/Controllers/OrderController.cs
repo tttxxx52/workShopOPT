@@ -26,8 +26,9 @@ namespace WorkShop.Controllers
                     Value = item.EmployeeID.ToString(),
                 });
             }
-            ViewBag.empData = employeeList;
-            
+            ViewBag.empData= employeeList;
+            ViewBag.empData2 = employeeList;
+
             //供應商List
             dataList = orderService.GetShipperData();
             foreach (var item in dataList)
