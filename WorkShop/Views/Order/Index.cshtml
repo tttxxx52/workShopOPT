@@ -6,11 +6,44 @@
 
 }
 
-<div id="grid"></div>
 
-<script type="text/javascript">
-    
+<script>
+    $(document).ready(function () {
+        var empData = @Html.Raw(Json.Encode(ViewBag.empData2));
+        var shipperData =@Html.Raw(Json.Encode(ViewBag.shipperData));
 
+        // create NumericTextBox from input HTML element
+        $("#OrderDate").kendoDatePicker();
+        $("#ShippedDate").kendoDatePicker();
+        $("#RequiredDate").kendoDatePicker();
+        debugger;
+ 
+        $("#EmployeeID").kendoDropDownList({
+                dataTextField: "Text",
+                dataValueField: "Value",
+                optionLabel: "請選擇",
+                dataSource: empData
+            });
+ 
+        $("#ShipperID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: shipperData 
+        });
+    });
+
+    //$(function () {
+    //$("#grid").kendoGrid({
+    //    columns: [
+    //      { field: "name" },
+    //      { field: "age" }
+    //    ],
+    //    filterable: true
+    //    });
+    //});
+    //document.ready(function () {
+    //});
     function Submit() {
         $.ajax({
             url: "/Order/GetData",
@@ -18,18 +51,11 @@
             data: $('#orderForm').serialize(), //傳直到/order/getdata
             dataType: "JSON",
             success: function (msg) {
-                
+
                 $('#resultTable').children().remove();
                 $('#resultTable').append("<tr><td>訂單編號</td><td>客戶名稱</td><td>訂購日期</td><td>出貨日期</td><td></td><td></td></tr>");
                 var date;
                 $.each(msg, function (i, item) {
-                    //date = new Date(parseInt(item.OrderDate.substr(6)));
-                    //item.OrderDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    //if (item.ShippedDate != null) {
-                    //    date = new Date(parseInt(item.ShippedDate.substr(6)));
-                    //    item.ShippedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    //}
-
                     $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
                                                 "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/Order/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
                 });
@@ -44,17 +70,43 @@
         $.ajax({
             url: "/Order/DoDelete",
             type: "Get",
-            data: {OrderID},
-        });
+            data: { OrderID},
+            });
 
         $('#resultTable').on('click', '.deleteData', function () {
             $(this).closest('tr').remove();
         });
     }
 
-    function remove() {
-        return "<input type= button class = deleteData onclick=DoDelete(" + e.OrderID +") value= " + "刪除" + "></td></tr>";
+    function updataCol(e) {
+        // prevent page scroll position change
+        e.preventDefault();
+        // e.target is the DOM element representing the button
+        var tr = $(e.target).closest("tr"); // get the current table row (tr)
+        // get the data bound to the current table row
+        var data = this.dataItem(tr);
+        var OrderID = data.OrderID;
+        location.href = "/Order/UpdatePage?OrderID=" + OrderID;
     }
+
+
+    function deleteCol(e) {
+        // prevent page scroll position change
+        e.preventDefault();
+        // e.target is the DOM element representing the button
+        var tr = $(e.target).closest("tr"); // get the current table row (tr)
+        // get the data bound to the current table row
+        var data = this.dataItem(tr);
+        var OrderID = data.OrderID;
+        var aa = 123;
+        $.ajax({
+            url: "/Order/DoDelete?OrderID=" + OrderID + "&B=" + aa,
+            type: "Get"
+            // data: {OrderID},
+        });
+        $(tr).remove();
+    }
+
 
     function go() {
         $.ajax({
@@ -63,6 +115,7 @@
             data: $('#orderForm').serialize(), //傳直到/order/getdata
             dataType: "JSON",
             success: function (msg) {
+                 debugger;
                 //$("#grid").kendoGrid({
                 //    columns: [
                 //      { field: "name" },
@@ -71,7 +124,6 @@
                 //    filterable: true,
                 //    dataSource: [{ name: "Jane", age: 30 }, { name: "John", age: 33 }]
                 //});
-                $("#grid").data("kendoGrid").dataSource.data(msg);
 
                 $("#grid").kendoGrid({
                     scrollable: false,
@@ -81,6 +133,8 @@
                         pageSize: 10,
                         pageSizes: true,
                     },
+                    dataSource: msg,
+
                     columns: [
                                 {
                                     template: "<div style='text-align:center;'>#= ++record #</div>",
@@ -118,33 +172,34 @@
                                     width: 180,
                                     headerAttributes: { style: "text-align:center;vertical-align:middle" }
                                 },
-                                {
-                                    field: "",
-                                    title: "修改",
-                                    attributes: { style: "text-align:center" },
-                                    width: 180,
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" }
+
+
+                            {
+                                command: {
+                                    text: "修改",
+                                    click: updataCol,
                                 },
-                                {
-                                    field: "",
-                                    title: "刪除",
-                                    attributes: { style: "text-align:center" },
-                                    template:remove,
-                                    width: 180,
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" }
-                                },
+                                attributes: { style: "text-align:center" },
+                                width: 180,
+                                headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                                title: "修改",
+                            },
+
+                               {
+                                   command: {
+                                       text: "刪除",
+                                       click: deleteCol,
+                                   },
+                                   attributes: { style: "text-align:center" },
+                                   width: 180,
+                                   headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                                   title: "刪除",
+                               }
                     ],
                     //record製作Grid的序號
                     dataBinding: function () {
                         record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
                     }
-                });
-
-                $.each(msg, function (i, item) {
-
-
-                    $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
-                                                "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/Order/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
                 });
             },
             error: function (xhr) {
@@ -157,63 +212,61 @@
 </script>
 
 
-    @using (Html.BeginForm("GetData", "OrderController", FormMethod.Post, new { @id = "orderForm" }))
-    {
-        <div class="form-horizontal">
-            @Html.AntiForgeryToken()
-            <h3>查詢訂單</h3>
-            <table class="table table-bordered">
-                <tr>
-                    <td>訂單編號</td>
-                    <td colspan="4">@Html.TextBoxFor(model => model.OrderID)</td>
-                </tr>
-                <tr>
-                    <td>客戶名稱</td>
-                    <td colspan="4">@Html.TextBoxFor(model => model.CustomerName)</td>
-                </tr>
-                <tr>
-                    <td>負責員工</td>
-                    <td colspan="4">@Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty)</td>
-                </tr>
-                <tr>
-                    <td>出貨公司</td>
-                    <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)</td>
-                </tr>
-                <tr>
-                    <td>訂購日期</td>
-                    <td>@Html.TextBoxFor(model => model.OrderDate, new { @type = "date" })</td>
-                    <td>出貨日期</td>
-                    <td>@Html.TextBoxFor(model => model.ShippedDate, new { @type = "date" })</td>
-                </tr>
-                <tr>
-                    <td>需要日期</td>
-                    <td colspan="4">@Html.TextBoxFor(model => model.RequiredDate, new { @type = "date" })</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td colspan="4">
-                        <input type="button" value="查詢" onclick="Submit()">
-                        <input type="button" value="go" onclick="go()">
-                        <input type="reset" value="清除" onclick="Back()">
-                        <input type="reset" value="新增" onclick=" location.href='/Order/InsertPage'">
-                       
-                    </td>
-                </tr>
-            </table>
-            <div id="grid"></div>
+@using (Html.BeginForm("GetData", "OrderController", FormMethod.Post, new { @id = "orderForm" }))
+{
+    <div class="form-horizontal">
+        @Html.AntiForgeryToken()
+        <h3>查詢訂單</h3>
+        <table  class="table table-bordered">
+            <tr>
+                <td>訂單編號</td>
+                <td colspan="4">@Html.TextBoxFor(model => model.OrderID, new { @class = "k-textbox" })</td>
+            </tr>
+            <tr>
+                <td>客戶名稱</td>
+                <td colspan="4">@Html.TextBoxFor(model => model.CustomerName)</td>
+            </tr>
 
-            <div id="resultDiv" style="display:none">
-                <form id="detailForm">
-                    <table id="resultTable" class="table table-striped"></table>
-                </form>
-            </div>
+            <tr>
+                <td>負責員工</td>
+                <td colspan="4">@Html.DropDownListFor(model => model.EmployeeID , (List<SelectListItem>)ViewBag.empData, string.Empty)</td>
+            </tr>
+            <tr>
+                <td>出貨公司</td>
+                <td colspan="4">@Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)</td>
+            </tr>
+            <tr>
+                <td>訂購日期</td>
+                <td>@Html.TextBoxFor(model => model.OrderDate, new { @type = "date" })</td>
+                <td>出貨日期</td>
+                <td>@Html.TextBoxFor(model => model.ShippedDate, new { @type = "date" })</td>
+            </tr>
+            <tr>
+                <td>需要日期</td>
+                <td colspan="4">@Html.TextBoxFor(model => model.RequiredDate, new { @type = "date" })</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="4">
+                    <input type="button" value="查詢" onclick="Submit()" class="k-button">
+                    <input type="button" value="go" onclick="go()" class="k-button">
+                    <input type="reset" value="清除" onclick="Back()" class="k-button" >
+                    <input type="reset" value="新增" class="k-button" onclick= location.href='/Order/InsertPage' >
+                </td>
+            </tr>
+        </table>
 
 
+        <div id="grid"></div>
+        <div id="resultDiv" style="display:none">
+            <form id="detailForm">
+                <table id="resultTable" class="table table-striped"></table>
+            </form>
         </div>
-        //<a href="/Order/InsertPage">新增訂單</a>
-        @section Scripts {
-            @Scripts.Render("~/bundles/jqueryval")
-            @Scripts.Render("~/bundles/KendoUi")
-        }
+
+
+    </div>
+
+    //<a href="/Order/InsertPage">新增訂單</a>
 }
 

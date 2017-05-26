@@ -56,7 +56,7 @@ namespace WorkShop.Models
         /// 出貨日期
         /// </summary>
         [DisplayName("出貨日期")]
-        public string ShippedDate { get; set; }
+        public DateTime? ShippedDate { get; set; }
 
         /// <summary>
         /// 出貨公司代號
