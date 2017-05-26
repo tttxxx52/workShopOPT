@@ -4,6 +4,53 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
+
+    $(document).ready(function () {
+        var CustomerID = @Html.Raw(Json.Encode(ViewBag.customerData));
+        var ShipperID = @Html.Raw(Json.Encode(ViewBag.shipperData));
+        var EmployeeID = @Html.Raw(Json.Encode(ViewBag.empData));
+        var ProductID = @Html.Raw(Json.Encode(ViewBag.productData));
+        
+
+        $("#ShippedDate").kendoDatePicker();
+        $("#RequiredDate").kendoDatePicker();
+        $("#OrderDate").kendoDatePicker();
+
+        $("#CustomerID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: CustomerID
+        });
+
+        $("#EmployeeID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: EmployeeID
+        });
+
+        $("#ShipperID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: ShipperID
+        });
+
+        $("#ProductID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            optionLabel: "請選擇",
+            dataSource: ProductID
+        });
+
+    });
+
+
+
+
+
+
     function AddNewDetail() {
         //明細資料範本
         var trtemplate = $('#detailContent tr').eq(0).html();
@@ -118,7 +165,7 @@
                     @Html.LabelFor(model => model.Freight)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.Freight)
+                    @Html.TextBoxFor(model => model.Freight, new { @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -126,13 +173,13 @@
                     @Html.LabelFor(model => model.ShipCountry)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipCountry)
+                    @Html.TextBoxFor(model => model.ShipCountry, new { @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipCity)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipCity)
+                    @Html.TextBoxFor(model => model.ShipCity, new { @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -140,13 +187,13 @@
                     @Html.LabelFor(model => model.ShipRegion)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipRegion)
+                    @Html.TextBoxFor(model => model.ShipRegion, new { @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipPostalCode)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipPostalCode)
+                    @Html.TextBoxFor(model => model.ShipPostalCode, new { @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -154,13 +201,13 @@
                     @Html.LabelFor(model => model.ShipAddress)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipAddress)
+                    @Html.TextBoxFor(model => model.ShipAddress, new { @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipName)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipName)
+                    @Html.TextBoxFor(model => model.ShipName, new { @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -170,8 +217,8 @@
             <tr>
                 <td></td>
                 <td colspan="4">
-                    <input type="submit" value="存檔">
-                    <input type="button" onclick="location.href='./Index';" value="回前一頁" />
+                    <input type="submit" value="存檔" class="k-button">
+                    <input type="button" onclick="location.href='./Index';" value="回前一頁"class="k-button" />
                 </td>
             </tr>
         </table>

@@ -10,6 +10,8 @@
 <script>
     $(document).ready(function () {
         var empData = @Html.Raw(Json.Encode(ViewBag.empData2));
+        var shipperData =@Html.Raw(Json.Encode(ViewBag.shipperData));
+
         // create NumericTextBox from input HTML element
         $("#OrderDate").kendoDatePicker();
         $("#ShippedDate").kendoDatePicker();
@@ -27,7 +29,7 @@
             dataTextField: "Text",
             dataValueField: "Value",
             optionLabel: "請選擇",
-            dataSource: empData
+            dataSource: shipperData 
         });
     });
 

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+/// <summary>
+/// Controller to View 的日期轉換(類似亂碼)
+/// </summary>
 namespace WorkShop.Result
 {
     public class CustJsonResult : JsonResult
