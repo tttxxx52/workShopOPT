@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WorkShop.Models;
+using WorkShop.Result;
 
 namespace WorkShop.Controllers
 {
@@ -26,7 +28,7 @@ namespace WorkShop.Controllers
                     Value = item.EmployeeID.ToString(),
                 });
             }
-            ViewBag.empData= employeeList;
+            ViewBag.empData = employeeList;
             ViewBag.empData2 = employeeList;
 
             //供應商List
@@ -51,15 +53,16 @@ namespace WorkShop.Controllers
         /// <param name="order"></param>
         /// <returns></returns>
         [HttpPost()]
-        public JsonResult GetData(Models.Order order)
+        public CustJsonResult GetData(Models.Order order)
         {
             Models.OrderService orderService = new Models.OrderService();
             List<Models.Order> list = orderService.SearchOrder(order);
             //var A= this.Json(list);
             //return A;
-            return this.Json(list);
+            //var a = this.Json(list);
+            return new CustJsonResult { Data = list };
         }
-
+ 
         /// <summary>
         /// 刪除訂單
         /// </summary>
