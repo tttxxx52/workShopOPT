@@ -9,8 +9,8 @@
         var CustomerID = @Html.Raw(Json.Encode(ViewBag.customerData));
         var ShipperID = @Html.Raw(Json.Encode(ViewBag.shipperData));
         var EmployeeID = @Html.Raw(Json.Encode(ViewBag.empData));
-        var ProductID = @Html.Raw(Json.Encode(ViewBag.productData));
-        
+        var productData = @Html.Raw(Json.Encode(ViewBag.productData));
+
 
         $("#ShippedDate").kendoDatePicker();
         $("#RequiredDate").kendoDatePicker();
@@ -37,11 +37,20 @@
             dataSource: ShipperID
         });
 
-        $("#ProductID").kendoDropDownList({
+        $("#DropdowmListProduct").kendoDropDownList({
             dataTextField: "Text",
             dataValueField: "Value",
-            optionLabel: "請選擇",
-            dataSource: ProductID
+            change: function(e) {
+                console.log(this.value());
+                var item = this.value();
+                var price = [];
+                var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
+                for (var i = 0;i<array.length;i++){
+                    price[i] = array[i].Value;
+                }
+                console.log(price[item-1]);
+                $("#UnitPrice").val(price[item-1]);
+            }
         });
 
     });
@@ -58,9 +67,11 @@
         $('#detailContent').append('<tr>' + trtemplate + '</tr>');
 
         //移除TR
-        $('#detailContent').on('click', '.btnRemove', function () {
+        $('#detailContent').on("click", "#btnRemove", function () {
             $(this).closest('tr').remove();
         });
+
+        $('#detailContent').on()
 
         for (var i = 0 ; i < $('#detailContent tr').length; i++) {
             $('.ProductID').eq(i).attr('name', 'OrderDetails[' + i + '].ProductID');
@@ -88,6 +99,7 @@
         Total(count);
     }
 
+
     function ChangePrice(item){
         var unitprice = $(item).closest("input:text").val();
         var qty = $(item).parent().next('td').children().val();
@@ -108,7 +120,6 @@
     }
 
 </script>
-
 <!-- Insert Order -->
 <div class="insertOrder">
     <h3>新增訂單</h3>
@@ -218,7 +229,7 @@
                 <td></td>
                 <td colspan="4">
                     <input type="submit" value="存檔" class="k-button">
-                    <input type="button" onclick="location.href='./Index';" value="回前一頁"class="k-button" />
+                    <input type="button" onclick="location.href='./Index';" value="回前一頁" class="k-button" />
                 </td>
             </tr>
         </table>
@@ -236,11 +247,11 @@
                 @for (int i = 0; i < 1; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, string.Empty, new { @id = "DropdowmListProduct", @class = "ProductID", onchange = "GetPrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "UnitPrice", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct", @class = "k-textbox" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "Qty", onchange = "Count(this)" })</td>
                         <td id="count"><input type="text"></td>
-                        <td><button type="button" class="btnRemove">取消</button></td>
+                        <td><button type="button" class="k-button" id="btnRemove">取消</button></td>
                     </tr>
                 }
             </tbody>
