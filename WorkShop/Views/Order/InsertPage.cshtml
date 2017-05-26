@@ -249,8 +249,8 @@
                     <tr>
                         <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct", @class = "k-textbox" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "Qty", onchange = "Count(this)" })</td>
-                        <td id="count"><input type="text"></td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", onchange = "Count(this)" })</td>
+                        <td id="count"><input type="text" readonly  ></td>
                         <td><button type="button" class="k-button" id="btnRemove">取消</button></td>
                     </tr>
                 }
