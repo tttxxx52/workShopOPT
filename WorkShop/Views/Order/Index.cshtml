@@ -49,9 +49,8 @@
             url: "/Order/GetData",
             type: "POST",
             data: $('#orderForm').serialize(), //傳直到/order/getdata
-            dataType: "JSON",
-            success: function (msg) {
-
+            dataType: "JSON",       
+            success: function (msg) {                
                 $('#resultTable').children().remove();
                 $('#resultTable').append("<tr><td>訂單編號</td><td>客戶名稱</td><td>訂購日期</td><td>出貨日期</td><td></td><td></td></tr>");
                 var date;
@@ -64,6 +63,9 @@
                 alert(xhr.status);
             }
         });
+
+
+
         document.getElementById("resultDiv").style.display = "";
     }
     function DoDelete(OrderID) {

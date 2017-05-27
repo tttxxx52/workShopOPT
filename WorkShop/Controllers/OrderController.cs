@@ -56,7 +56,7 @@ namespace WorkShop.Controllers
         public CustJsonResult GetData(Models.Order order)
         {
             Models.OrderService orderService = new Models.OrderService();
-            List<Models.Order> list = orderService.SearchOrder(order);
+            List<Models.Order> list = orderService.SearchOrder(order);       
             //var A= this.Json(list);
             //return A;
             //var a = this.Json(list);

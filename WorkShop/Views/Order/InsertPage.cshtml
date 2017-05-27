@@ -64,20 +64,29 @@
         //明細資料範本
         var trtemplate = $('#detailContent tr').eq(0).html();
         //新增一列名資料
-        $('#detailContent').append('<tr>' + trtemplate + '</tr>');
+        var count = $('#detailContent tr').length;
+        var trt = trtemplate.replace("OrderDetails[0].ProductID",'OrderDetails['+[count]+'].ProductID');
+        var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+[count]+'].UnitPrice');
+        var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+[count]+'].Qty');
+        console.log(trt);
+        $('#detailContent').append('<tr>' + trt + '</tr>');
+
 
         //移除TR
         $('#detailContent').on("click", "#btnRemove", function () {
             $(this).closest('tr').remove();
         });
 
-        $('#detailContent').on()
 
-        for (var i = 0 ; i < $('#detailContent tr').length; i++) {
-            $('.ProductID').eq(i).attr('name', 'OrderDetails[' + i + '].ProductID');
-            $('.Qty').eq(i).attr('name', 'OrderDetails[' + i + '].Qty');
-            $('.UnitPrice').eq(i).attr('name', 'OrderDetails[' + i + '].UnitPrice');
-        }
+        $('#detailContent').on()
+       
+        //for (var i = 0 ; i < $('#detailContent tr').length; i++) {
+        //    $('ProductID').eq(i).attr('name', 'OrderDetails[' + i + '].ProductID');
+        //    console.log( $('#detailContent').html.);
+        //    $('Qty').eq(i).attr('name', 'OrderDetails[' + i + '].Qty');
+        //    $('UnitPrice').eq(i).attr('name', 'OrderDetails[' + i + '].UnitPrice');
+        //}
+
     }
 
 
@@ -247,7 +256,7 @@
                 @for (int i = 0; i < 1; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct", @class = "k-textbox" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", onchange = "Count(this)" })</td>
                         <td id="count"><input type="text" readonly  ></td>

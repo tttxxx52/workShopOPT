@@ -4,6 +4,51 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#OrderDate").kendoDatePicker();
+        $("#RequiredDate").kendoDatePicker();
+        $("#ShippedDate").kendoDatePicker();
+        
+        $("#CustomerID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+        $("#EmployeeID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+        $("#ShipperID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+        $("#DropdowmListProduct").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            change: function(e) {
+                var item = this.value();
+                var price = [];
+                var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
+                for (var i = 0;i<array.length;i++){
+                    price[i] = array[i].Value;
+                }
+                console.log(price[item-1]);
+                $("#UnitPrice").val(price[item-1]);
+            }
+        });
+
+    });
+
+</script>
+
+
+
 <div id="updateOrder" class="updateOrder">
     <h3>修改訂單</h3>
     @using (Html.BeginForm("DoUpdate", "Order", FormMethod.Post, new { @id = "updateForm" }))
@@ -16,7 +61,7 @@
                     @Html.LabelFor(model => model.OrderID)
                 </td>
                 <td colspan="4">
-                    @Html.TextBoxFor(model => model.OrderID, new { Value = ViewBag.orderData.OrderID })
+                    @Html.TextBoxFor(model => model.OrderID, new { Value = ViewBag.orderData.OrderID , @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -24,7 +69,7 @@
                     @Html.LabelFor(model => model.CustomerName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, string.Empty)
+                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, "請選擇")
                 </td>
             </tr>
             <tr>
@@ -68,7 +113,7 @@
                     @Html.LabelFor(model => model.Freight)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.Freight, new { Value = ViewBag.orderData.Freight })
+                    @Html.TextBoxFor(model => model.Freight, new { Value = ViewBag.orderData.Freight, @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -76,13 +121,13 @@
                     @Html.LabelFor(model => model.ShipCountry)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipCountry, new { Value = ViewBag.orderData.ShipCountry })
+                    @Html.TextBoxFor(model => model.ShipCountry, new { Value = ViewBag.orderData.ShipCountry, @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipCity)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipCity, new { Value = ViewBag.orderData.ShipCity })
+                    @Html.TextBoxFor(model => model.ShipCity, new { Value = ViewBag.orderData.ShipCity, @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -90,13 +135,13 @@
                     @Html.LabelFor(model => model.ShipRegion)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipRegion, new { Value = ViewBag.orderData.ShipRegion })
+                    @Html.TextBoxFor(model => model.ShipRegion, new { Value = ViewBag.orderData.ShipRegion, @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipPostalCode)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipPostalCode, new { Value = ViewBag.orderData.ShipPostalCode })
+                    @Html.TextBoxFor(model => model.ShipPostalCode, new { Value = ViewBag.orderData.ShipPostalCode, @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -104,13 +149,13 @@
                     @Html.LabelFor(model => model.ShipAddress)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipAddress, new { Value = ViewBag.orderData.ShipAddress })
+                    @Html.TextBoxFor(model => model.ShipAddress, new { Value = ViewBag.orderData.ShipAddress, @class = "k-textbox" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipName)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipName, new { Value = ViewBag.orderData.ShipName })
+                    @Html.TextBoxFor(model => model.ShipName, new { Value = ViewBag.orderData.ShipName, @class = "k-textbox" })
                 </td>
             </tr>
             <tr>
@@ -120,9 +165,9 @@
             <tr>
                 <td></td>
                 <td colspan="4">
-                    <input type="submit" value="存檔">
-                    <input type="button" value="刪除本筆訂單" onclick="location.href='/GetOrder/DoDelete?OrderID=@ViewBag.orderData.OrderID'">
-                    <input type="button" onclick="location.href='./Index';" value="回前一頁" />
+                    <input type="submit" value="存檔"class="k-button">
+                    <input type="button" value="刪除本筆訂單" onclick="location.href='/GetOrder/DoDelete?OrderID=@ViewBag.orderData.OrderID'"class="k-button">
+                    <input type="button" onclick="location.href='./Index';" value="回前一頁"class="k-button" />
                 </td>
             </tr>
         </table>
@@ -140,9 +185,9 @@
                 @for (int i = 0; i < ViewBag.OrderDetails.Count; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], string.Empty, new { @id = "DropdowmListProduct", @class = "ProductID", onchange = "GetPrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "UnitPrice", @id = "UnitPrice", Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "Qty", Value = ViewBag.OrderDetails[i].Qty, onchange = "Count(this)" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], string.Empty, new { @id = "DropdowmListProduct" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", Value = ViewBag.OrderDetails[i].Qty, onchange = "Count(this)" })</td>
                         @{
                             double UnitPrice = Convert.ToDouble(ViewBag.OrderDetails[i].UnitPrice);
                             double Qty = Convert.ToDouble(ViewBag.OrderDetails[i].Qty);
@@ -155,7 +200,7 @@
                 @for (int i = ViewBag.OrderDetails.Count; i < ViewBag.OrderDetails.Count + 1; i++)
                 {
                     <tr id="newDetail" style="display: none">
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[0].ProductID, (List<SelectListItem>)ViewBag.productData[0], string.Empty, new { @id = "DropdowmListProduct", @class = "ProductID", onchange = "GetPrice(this)" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[0].ProductID, (List<SelectListItem>)ViewBag.productData[0], string.Empty, new { @id = "DropdowmListProduct" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[0].UnitPrice, new { @class = "UnitPrice", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[0].Qty, new { @class = "Qty", onchange = "Count(this)" })</td>
                         <td id="count"><input type="text"></td>
