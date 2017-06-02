@@ -63,14 +63,38 @@
     function AddNewDetail() {
         //明細資料範本
         var trtemplate = $('#detailContent tr').eq(0).html();
+
         //新增一列名資料
         var count = $('#detailContent tr').length;
-        var trt = trtemplate.replace("OrderDetails[0].ProductID",'OrderDetails['+[count]+'].ProductID');
-        var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+[count]+'].UnitPrice');
-        var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+[count]+'].Qty');
+
+        var trt = trtemplate.replace('id="DropdowmListProduct"','id="DropdowmListProduct'+count+'"');
+        var trt = trt.replace('UnitPrice','UnitPrice'+count+'');
+        var trt = trt.replace('OrderDetails_0__Qty','OrderDetails_0__Qty'+count+'');
+
+        var trt = trt.replace("OrderDetails[0].ProductID",'OrderDetails['+count+'].ProductID');
+        var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+count+'].UnitPrice');
+        var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+count+'].Qty');
+        var trt = trt.replace("count0",'count'+count+'');
+
         console.log(trt);
         $('#detailContent').append('<tr>' + trt + '</tr>');
 
+        $('#DropdowmListProduct'+count+'').kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            change: function(e) {
+                console.log(this.value());
+                var item = this.value();
+                var price = [];
+                var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
+                for (var i = 0;i<array.length;i++){
+                    price[i] = array[i].Value;
+                }
+                console.log(price[item-1]);
+                $('#UnitPrice'+count+'').val(price[item-1]);
+            }
+        });
+        debugger;
 
         //移除TR
         $('#detailContent').on("click", "#btnRemove", function () {
@@ -78,14 +102,7 @@
         });
 
 
-        $('#detailContent').on()
-       
-        //for (var i = 0 ; i < $('#detailContent tr').length; i++) {
-        //    $('ProductID').eq(i).attr('name', 'OrderDetails[' + i + '].ProductID');
-        //    console.log( $('#detailContent').html.);
-        //    $('Qty').eq(i).attr('name', 'OrderDetails[' + i + '].Qty');
-        //    $('UnitPrice').eq(i).attr('name', 'OrderDetails[' + i + '].UnitPrice');
-        //}
+
 
     }
 
@@ -121,8 +138,11 @@
         var countArray = [];
         var total = 0;
         for(var i=0;i<$('#detailContent tr').length;i++){
-            countArray[i] = count;
-            total += countArray[i];
+            a = parseInt($('input[id="count'+i+'"]').val());
+            
+            debugger;
+  
+            total += a;
         }
 
         document.getElementById("total").innerHTML = total;
@@ -259,7 +279,7 @@
                         <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", onchange = "Count(this)" })</td>
-                        <td id="count"><input type="text" readonly  ></td>
+                        <td id="count" ><input type="text" id="count0" readonly  ></td>
                         <td><button type="button" class="k-button" id="btnRemove">取消</button></td>
                     </tr>
                 }
