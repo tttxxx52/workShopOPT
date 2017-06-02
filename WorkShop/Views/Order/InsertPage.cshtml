@@ -37,7 +37,7 @@
             dataSource: ShipperID
         });
 
-        $("#DropdowmListProduct").kendoDropDownList({
+        $("#DropdowmListProduct0").kendoDropDownList({
             dataTextField: "Text",
             dataValueField: "Value",
             change: function(e) {
@@ -49,7 +49,11 @@
                     price[i] = array[i].Value;
                 }
                 console.log(price[item-1]);
-                $("#UnitPrice").val(price[item-1]);
+                $("#UnitPrice0").val(price[item-1]);
+                var qty = parseInt($('input[id="OrderDetails_0__Qty0"]').val());
+                var total = qty * price[item-1] ;
+                $('input[id="count0"]').val(total)
+                Total();
             }
         });
 
@@ -67,9 +71,9 @@
         //新增一列名資料
         var count = $('#detailContent tr').length;
 
-        var trt = trtemplate.replace('id="DropdowmListProduct"','id="DropdowmListProduct'+count+'"');
-        var trt = trt.replace('UnitPrice','UnitPrice'+count+'');
-        var trt = trt.replace('OrderDetails_0__Qty','OrderDetails_0__Qty'+count+'');
+        var trt = trtemplate.replace('id="DropdowmListProduct0"','id="DropdowmListProduct'+count+'"');
+        var trt = trt.replace('UnitPrice0','UnitPrice'+count+'');
+        var trt = trt.replace('OrderDetails_0__Qty0','OrderDetails_0__Qty'+count+'');
 
         var trt = trt.replace("OrderDetails[0].ProductID",'OrderDetails['+count+'].ProductID');
         var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+count+'].UnitPrice');
@@ -92,6 +96,10 @@
                 }
                 console.log(price[item-1]);
                 $('#UnitPrice'+count+'').val(price[item-1]);
+                var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
+                var total = qty * price[item-1] ;
+                $('input[id="count'+count+'"]').val(total)
+                Total();
             }
         });
         debugger;
@@ -106,6 +114,11 @@
 
     }
 
+    function ChangeList(count){
+  
+        var qty = parseInt($('input[id="count'+count+'"]').val());
+        var count = unitprice * qty;
+    }
 
     function GetPrice(item) {
         var price = [];
@@ -276,9 +289,9 @@
                 @for (int i = 0; i < 1; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", onchange = "ChangePrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", onchange = "Count(this)" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct0" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice0", onchange = "ChangePrice(this)" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox",id= "OrderDetails_0__Qty0", onchange = "Count(this)" })</td>
                         <td id="count" ><input type="text" id="count0" readonly  ></td>
                         <td><button type="button" class="k-button" id="btnRemove">取消</button></td>
                     </tr>

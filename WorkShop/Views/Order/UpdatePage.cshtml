@@ -7,43 +7,7 @@
 
 
 <script>
-    $(document).ready(function () {
-
-        $("#OrderDate").kendoDatePicker();
-        $("#RequiredDate").kendoDatePicker();
-        $("#ShippedDate").kendoDatePicker();
-        
-        $("#CustomerID").kendoDropDownList({
-            dataTextField: "Text",
-            dataValueField: "Value"
-        });
-
-        $("#EmployeeID").kendoDropDownList({
-            dataTextField: "Text",
-            dataValueField: "Value"
-        });
-
-        $("#ShipperID").kendoDropDownList({
-            dataTextField: "Text",
-            dataValueField: "Value"
-        });
-
-        $("#DropdowmListProduct").kendoDropDownList({
-            dataTextField: "Text",
-            dataValueField: "Value",
-            change: function(e) {
-                var item = this.value();
-                var price = [];
-                var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
-                for (var i = 0;i<array.length;i++){
-                    price[i] = array[i].Value;
-                }
-                console.log(price[item-1]);
-                $("#UnitPrice").val(price[item-1]);
-            }
-        });
-
-    });
+ 
 
 </script>
 
@@ -185,19 +149,22 @@
                 @for (int i = 0; i < ViewBag.OrderDetails.Count; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], string.Empty, new { @id = "DropdowmListProduct" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice", Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox", Value = ViewBag.OrderDetails[i].Qty, onchange = "Count(this)" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], string.Empty, new { @id = "DropdowmListProduct"+i })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", id = "UnitPrice" + i , Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox" , Value = ViewBag.OrderDetails[i].Qty, onchange = "Count(this)" })</td>
                         @{
                             double UnitPrice = Convert.ToDouble(ViewBag.OrderDetails[i].UnitPrice);
                             double Qty = Convert.ToDouble(ViewBag.OrderDetails[i].Qty);
                         }
-                        <td id="count" class="count">@(Qty * UnitPrice)</td>
+                        <td id="count" class="count">
+                            <input type="text" id=@("count"+ i) readonly value=@(Qty * UnitPrice)>
+                        </td>
                         <td><button type="button" class="btnRemove">取消</button></td>
                     </tr>
+                        
                             }
 
-                @for (int i = ViewBag.OrderDetails.Count; i < ViewBag.OrderDetails.Count + 1; i++)
+                @*@for (int i = ViewBag.OrderDetails.Count; i < ViewBag.OrderDetails.Count + 1; i++)
                 {
                     <tr id="newDetail" style="display: none">
                         <td>@Html.DropDownListFor(model => Model.OrderDetails[0].ProductID, (List<SelectListItem>)ViewBag.productData[0], string.Empty, new { @id = "DropdowmListProduct" })</td>
@@ -206,33 +173,100 @@
                         <td id="count"><input type="text"></td>
                         <td><button type="button" class="btnRemove">取消</button></td>
                     </tr>
-                }
+
+
+                }*@
             </tbody>
         </table>
                             }
 </div>
 
 <script>
+
+    $(document).ready(function () {
+
+        $("#OrderDate").kendoDatePicker();
+        $("#RequiredDate").kendoDatePicker();
+        $("#ShippedDate").kendoDatePicker();
+        
+        $("#CustomerID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+        $("#EmployeeID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+        $("#ShipperID").kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value"
+        });
+
+
+        for (var i = 0 ; i < $('#detailContent tr').length; i++ ){
+            var count = i ;
+            $('#DropdowmListProduct'+i+'').kendoDropDownList({
+                dataTextField: "Text",
+                dataValueField: "Value",
+                change: function(e) {
+                    var item = this.value();
+                    var price = [];
+                    var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
+                    for (var i = 0;i<array.length;i++){
+                        price[i] = array[i].Value;
+                    }
+                    console.log(price[item-1]);
+                    $('#UnitPrice'+count+'').val(price[item-1]);
+                }
+            });
+
+        }
+
+
+    });
+
+
     $('#detailContent').on('click', '.btnRemove', function () {
         $(this).closest('tr').remove();
-        alert("aa");
+
     });
     function AddNewDetail() {
-        console.log($('#detailContent tr').length);
-        //明細資料範本
-        var trtemplate = $('#detailContent tr').eq(($('#detailContent tr').length)-1).html();
+        var trtemplate = $('#detailContent tr').eq(0).html();
+
         //新增一列名資料
-        $('#detailContent').append('<tr>' + trtemplate + '</tr>');
+        var count = $('#detailContent tr').length;
 
-        $('#newDetail').remove();
-        //移除TR
+        var trt = trtemplate.replace('id="DropdowmListProduct0"','id="DropdowmListProduct'+count+'"');
+        var trt = trt.replace('UnitPrice0','UnitPrice'+count+'');
+        var trt = trt.replace('OrderDetails_0__Qty0','OrderDetails_0__Qty'+count+'');
+
+        var trt = trt.replace("OrderDetails[0].ProductID",'OrderDetails['+count+'].ProductID');
+        var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+count+'].UnitPrice');
+        var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+count+'].Qty');
+        var trt = trt.replace("count0",'count'+count+'');
+
+        console.log(trt);
+        $('#detailContent').append('<tr>' + trt + '</tr>');
+
+        $('#DropdowmListProduct'+count+'').kendoDropDownList({
+            dataTextField: "Text",
+            dataValueField: "Value",
+            change: function(e) {
+                console.log(this.value());
+                var item = this.value();
+                var price = [];
+                var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
+                for (var i = 0;i<array.length;i++){
+                    price[i] = array[i].Value;
+                }
+                console.log(price[item-1]);
+                $('#UnitPrice'+count+'').val(price[item-1]);
+            }
+        });
 
 
-        for (var i = 0 ; i < $('#detailContent tr').length; i++) {
-            $('.ProductID').eq(i).attr('name', 'OrderDetails[' + i + '].ProductID');
-            $('.Qty').eq(i).attr('name', 'OrderDetails[' + i + '].Qty');
-            $('.UnitPrice').eq(i).attr('name', 'OrderDetails[' + i + '].UnitPrice');
-        }
     }
 
     function GetPrice(item) {
