@@ -206,7 +206,7 @@
 
 
         for (var i = 0 ; i < $('#detailContent tr').length; i++ ){
-            var count = i ;
+
             $('#DropdowmListProduct'+i+'').kendoDropDownList({
                 dataTextField: "Text",
                 dataValueField: "Value",
@@ -217,8 +217,12 @@
                     for (var i = 0;i<array.length;i++){
                         price[i] = array[i].Value;
                     }
-                    console.log(price[item-1]);
+                
+                    var id = this.element.attr("id");
+                    var count = id.substr(19);
+                    console.log(count);
                     $('#UnitPrice'+count+'').val(price[item-1]);
+                    
                 }
             });
 
@@ -247,7 +251,6 @@
         var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+count+'].Qty');
         var trt = trt.replace("count0",'count'+count+'');
 
-        console.log(trt);
         $('#detailContent').append('<tr>' + trt + '</tr>');
 
         $('#DropdowmListProduct'+count+'').kendoDropDownList({
