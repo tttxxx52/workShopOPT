@@ -149,9 +149,9 @@
                 @for (int i = 0; i < ViewBag.OrderDetails.Count; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], string.Empty, new { @id = "DropdowmListProduct"+i })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], "請選擇", new { @id = "DropdowmListProduct"+i })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", id = "UnitPrice" + i , Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
-                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox" , Value = ViewBag.OrderDetails[i].Qty, onchange = "Count(this)" })</td>
+                        <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox" , Value = ViewBag.OrderDetails[i].Qty,id= "OrderDetails_0__Qty"+i, onchange = "Count(this)" })</td>
                         @{
                             double UnitPrice = Convert.ToDouble(ViewBag.OrderDetails[i].UnitPrice);
                             double Qty = Convert.ToDouble(ViewBag.OrderDetails[i].Qty);
@@ -222,6 +222,10 @@
                     var count = id.substr(19);
                     console.log(count);
                     $('#UnitPrice'+count+'').val(price[item-1]);
+                    var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
+                    var total = qty * price[item-1] ;
+                    $('input[id="count'+count+'"]').val(total)
+                    Total();
                     
                 }
             });
@@ -238,10 +242,10 @@
     });
     function AddNewDetail() {
         var trtemplate = $('#detailContent tr').eq(0).html();
+       
 
         //新增一列名資料
         var count = $('#detailContent tr').length;
-
         var trt = trtemplate.replace('id="DropdowmListProduct0"','id="DropdowmListProduct'+count+'"');
         var trt = trt.replace('UnitPrice0','UnitPrice'+count+'');
         var trt = trt.replace('OrderDetails_0__Qty0','OrderDetails_0__Qty'+count+'');
@@ -250,8 +254,15 @@
         var trt = trt.replace("OrderDetails[0].UnitPrice",'OrderDetails['+count+'].UnitPrice');
         var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+count+'].Qty');
         var trt = trt.replace("count0",'count'+count+'');
+        var trt = trt.replace('class="k-input">Product CPHFY',"請選擇");
+
 
         $('#detailContent').append('<tr>' + trt + '</tr>');
+        $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
+        $('#UnitPrice'+count+'').val("")
+        $('#OrderDetails_0__Qty'+count+'').val("")
+        $('#count'+count+'').val("")
+        
 
         $('#DropdowmListProduct'+count+'').kendoDropDownList({
             dataTextField: "Text",
@@ -266,6 +277,10 @@
                 }
                 console.log(price[item-1]);
                 $('#UnitPrice'+count+'').val(price[item-1]);
+                var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
+                var total = qty * price[item-1] ;
+                $('input[id="count'+count+'"]').val(total)
+                Total();
             }
         });
 
@@ -286,7 +301,7 @@
         var unitprice = $(item).parent().prev('td').children().val();
         var qty = $(item).closest("input:text").val();
         var count = unitprice * qty;
-        $(item).parent().next('td').text(count);
+        $(item).parent().next('td').children().val(count);
         Total();
     }
 
@@ -295,20 +310,23 @@
         var qty = $(item).parent().next('td').children().val();
         var total = unitprice * qty;
 
-        $(item).parent().next('td').next('td').text(total);
+        $(item).parent().next('td').next('td').children().val(total);
     }
 
-    function Total(){
+    function Total(count){
         var countArray = [];
         var total = 0;
         for(var i=0;i<$('#detailContent tr').length;i++){
-            countArray[i] = parseInt($('.count').eq(i).text());
-            total += countArray[i];
-            console.log(countArray[i]);
+            a = parseInt($('input[id="count'+i+'"]').val());
+            
+            debugger;
+  
+            total += a;
         }
 
         document.getElementById("total").innerHTML = total;
     }
+
     function DoDelete(OrderID) {
         $.ajax({
             url: "/GetOrder/DoDelete",
