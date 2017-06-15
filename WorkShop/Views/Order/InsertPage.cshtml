@@ -60,6 +60,8 @@
                 $('input[id="count0"]').val(total)
                 Total();
 
+                var count = 0;
+                Repeat (count)
 
                 
                 //var val = $('#DropdowmListProduct0 :selected').val();
@@ -133,9 +135,8 @@
                 var total = qty * price[item-1] ;
                 $('input[id="count'+count+'"]').val(total)
                 Total();
-
+                Repeat (count)
                 //var val = $('#DropdowmListProduct0 :selected').val();
-                //var repeat = 0 ;
                 //for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
                 //    if (val == $('#DropdowmListProduct'+(i+1)+' :selected').val() ){
                 //        alert("商品重複")
@@ -152,10 +153,11 @@
                 //        }
                 //    }
                 //}
+    
+                                            
+                     
 
-                
-
-            }
+                }            
         });
 
         //移除TR
@@ -164,6 +166,41 @@
         });
 
 
+
+
+    }
+
+    function Repeat (count){
+        console.log(count);
+        if( $('#detailContent tr').length > 1){
+            var decideRepeatVal = new Array();
+            for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
+                var repeatVal = $('#DropdowmListProduct'+(i)+' :selected').val();
+                decideRepeatVal[i] = repeatVal ;
+                console.log( decideRepeatVal[i]);
+                for(j=0 ; j < decideRepeatVal.length;j++){
+                    for(var k=j+1;k<decideRepeatVal.length;k++){
+
+                        if (decideRepeatVal[j] == "" ){
+                            console.log("不理他");
+                            return;
+                        }
+                        else if(decideRepeatVal[j]==decideRepeatVal[k]){
+                            console.log("重複");
+                            alert("商品重複，請確認");
+                            debugger;
+                            $('#UnitPrice'+count+'').val("")
+                            $('#OrderDetails_0__Qty'+count+'').val("")
+                            $('#count'+count+'').val("")
+                            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
+
+                            return;
+                        }
+                    }
+         
+                }
+            }   
+        }
 
 
     }
@@ -231,7 +268,7 @@
                     @Html.LabelFor(model => model.CustomerName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, string.Empty)
+                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, string.Empty,new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -239,7 +276,7 @@
                     @Html.LabelFor(model => model.EmployeeName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty)
+                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty, new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -247,7 +284,7 @@
                     @Html.LabelFor(model => model.OrderDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.OrderDate, new { @type = "date" })
+                    @Html.TextBoxFor(model => model.OrderDate, new { @type = "date", required = "required" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.RequiredDate)
@@ -268,7 +305,7 @@
                     @Html.LabelFor(model => model.ShipperName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)
+                    @Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty, new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -347,7 +384,7 @@
                 @for (int i = 0; i < 1; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct0" })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData, "請選擇", new { @id = "DropdowmListProduct0", required = "required" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", @id = "UnitPrice0", onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox",id= "OrderDetails_0__Qty0", onchange = "Count(this)" })</td>
                         <td id="count" ><input type="text" id="count0" readonly  ></td>
