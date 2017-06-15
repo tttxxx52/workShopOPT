@@ -82,12 +82,17 @@
 
     function updataCol(e) {
         // prevent page scroll position change
+        // 終止預設行為(ex防止按下enter提交的動作,不允許點擊開啟所設置的url)
         e.preventDefault();
         // e.target is the DOM element representing the button
-        var tr = $(e.target).closest("tr"); // get the current table row (tr)
+        //獲取該行的dom
+        var tr = $(e.target).closest("tr");
+        // get the current table row (tr)
         // get the data bound to the current table row
+        //獲取dom的row
         var data = this.dataItem(tr);
         var OrderID = data.OrderID;
+        //導頁行為
         location.href = "/Order/UpdatePage?OrderID=" + OrderID;
     }
 
@@ -127,6 +132,7 @@
                 //    dataSource: [{ name: "Jane", age: 30 }, { name: "John", age: 33 }]
                 //});
 
+                //寫在documentread內
                 $("#grid").kendoGrid({
                     scrollable: false,
                     filterable: true,

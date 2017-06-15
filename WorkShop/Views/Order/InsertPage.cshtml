@@ -11,10 +11,17 @@
         var EmployeeID = @Html.Raw(Json.Encode(ViewBag.empData));
         var productData = @Html.Raw(Json.Encode(ViewBag.productData));
 
+       
 
         $("#ShippedDate").kendoDatePicker();
         $("#RequiredDate").kendoDatePicker();
         $("#OrderDate").kendoDatePicker();
+
+        var validator = $("#insertForm").kendoValidator();
+
+        //日期驗證
+        $("#RequiredDate").attr("data-greaterdate-field","OrderDate");
+        $("#RequiredDate").attr("data-greaterdate-msg","error");
 
         $("#CustomerID").kendoDropDownList({
             dataTextField: "Text",
@@ -41,26 +48,55 @@
             dataTextField: "Text",
             dataValueField: "Value",
             change: function(e) {
-                console.log(this.value());
                 var item = this.value();
                 var price = [];
                 var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
                 for (var i = 0;i<array.length;i++){
                     price[i] = array[i].Value;
                 }
-                console.log(price[item-1]);
                 $("#UnitPrice0").val(price[item-1]);
                 var qty = parseInt($('input[id="OrderDetails_0__Qty0"]').val());
                 var total = qty * price[item-1] ;
                 $('input[id="count0"]').val(total)
                 Total();
+
+
+                
+                //var val = $('#DropdowmListProduct0 :selected').val();
+                //for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
+                //    if (val == $('#DropdowmListProduct'+(i+1)+' :selected').val() ){
+                //        alert("商品重複")
+                //        $('#DropdowmListProduct0 option[value=""]').attr('selected', 'selected');
+                //        $('#UnitPrice0').val("")
+                //        $('#OrderDetails_0__Qty0').val("")
+                //        $('#count0').val("")
+                //    }
+              
+
+                //}
             }
         });
 
     });
 
 
+   $(function () {
+       var container = $("#insertForm");
+        kendo.init(container);
+        container.kendoValidator({
+            rules: {
+                greaterdate: function (input) {
+                    if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
+                        var date = kendo.parseDate(input.val()),
+                            otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
+                        return otherDate == null || otherDate.getTime() < date.getTime();
+                    }
 
+                    return true;
+                }
+            }
+        });
+    });
 
 
 
@@ -80,29 +116,47 @@
         var trt = trt.replace("OrderDetails[0].Qty",'OrderDetails['+count+'].Qty');
         var trt = trt.replace("count0",'count'+count+'');
 
-        console.log(trt);
         $('#detailContent').append('<tr>' + trt + '</tr>');
 
         $('#DropdowmListProduct'+count+'').kendoDropDownList({
             dataTextField: "Text",
             dataValueField: "Value",
             change: function(e) {
-                console.log(this.value());
                 var item = this.value();
                 var price = [];
                 var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
                 for (var i = 0;i<array.length;i++){
                     price[i] = array[i].Value;
                 }
-                console.log(price[item-1]);
                 $('#UnitPrice'+count+'').val(price[item-1]);
                 var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
                 var total = qty * price[item-1] ;
                 $('input[id="count'+count+'"]').val(total)
                 Total();
+
+                //var val = $('#DropdowmListProduct0 :selected').val();
+                //var repeat = 0 ;
+                //for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
+                //    if (val == $('#DropdowmListProduct'+(i+1)+' :selected').val() ){
+                //        alert("商品重複")
+                //        repeat = 1;
+                //     if (repeat = 1){
+                            
+                //            $('#UnitPrice'+count+'').val("")
+                //            $('#OrderDetails_0__Qty'+count+'').val("")
+                //            $('#count'+count+'').val("")
+                //            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
+                //            console.log(count);
+                //            repeat = 0 ;
+                //            break
+                //        }
+                //    }
+                //}
+
+                
+
             }
         });
-        debugger;
 
         //移除TR
         $('#detailContent').on("click", "#btnRemove", function () {
@@ -153,13 +207,16 @@
         for(var i=0;i<$('#detailContent tr').length;i++){
             a = parseInt($('input[id="count'+i+'"]').val());
             
-            debugger;
+        
   
             total += a;
         }
 
         document.getElementById("total").innerHTML = total;
     }
+
+
+
 
 </script>
 <!-- Insert Order -->
@@ -196,7 +253,8 @@
                     @Html.LabelFor(model => model.RequiredDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date" })
+                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", required = "required" })
+                    <span data-for='RequiredDate' class='k-invalid-msg'></span>
                 </td>
             </tr>
             <tr>
@@ -204,7 +262,7 @@
                     @Html.LabelFor(model => model.ShippedDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date" })
+                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date", required = "required" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipperName)
@@ -218,7 +276,7 @@
                     @Html.LabelFor(model => model.Freight)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.Freight, new { @class = "k-textbox" })
+                    @Html.TextBoxFor(model => model.Freight, new { @class = "k-textbox", required = "required" })
                 </td>
             </tr>
             <tr>
@@ -240,7 +298,7 @@
                     @Html.LabelFor(model => model.ShipRegion)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShipRegion, new { @class = "k-textbox" })
+                    @Html.TextBoxFor(model => model.ShipRegion, new { @class = "k-textbox"  })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipPostalCode)
@@ -270,7 +328,7 @@
             <tr>
                 <td></td>
                 <td colspan="4">
-                    <input type="submit" value="存檔" class="k-button">
+                    <input type="submit" value="存檔" class="k-button" >
                     <input type="button" onclick="location.href='./Index';" value="回前一頁" class="k-button" />
                 </td>
             </tr>
