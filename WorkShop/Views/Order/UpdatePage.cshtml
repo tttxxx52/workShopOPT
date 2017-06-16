@@ -55,7 +55,7 @@
                     @Html.LabelFor(model => model.RequiredDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", Value = ViewBag.RequiredDate })
+                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", Value = ViewBag.RequiredDate, @data_greaterdate_msg = "error" })
                 </td>
             </tr>
             <tr>
@@ -63,7 +63,7 @@
                     @Html.LabelFor(model => model.ShippedDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date", Value = ViewBag.ShippedDate })
+                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date", Value = ViewBag.ShippedDate, @data_greaterdate_msg = "error" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipperName)
@@ -236,7 +236,23 @@
     });
 
     
+    //日期驗證
+    $(function () {
+        var container = $("#updateOrder");
+        container.kendoValidator({
+            rules: {
+                greaterdate: function (input) {
+                    if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
+                        var date = kendo.parseDate(input.val()),
+                            otherDate = kendo.parseDate($("[name=OrderDate]").val());
+                        return otherDate == null || otherDate.getTime() < date.getTime();
+                    }
 
+                    return true;
+                }
+            }
+        });
+    });
 
 
     $('#detailContent').on('click', '.btnRemove', function () {
@@ -312,8 +328,8 @@
                             $('#UnitPrice'+count+'').val("")
                             $('#OrderDetails_0__Qty'+count+'').val("")
                             $('#count'+count+'').val("")
-                            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
-
+                            $('#DropdowmListProduct'+count).data("kendoDropDownList").select(0);
+             
                             return;
                         }
                     }
