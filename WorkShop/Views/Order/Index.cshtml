@@ -9,6 +9,14 @@
 
 <script>
     $(document).ready(function () {
+        //kendo初始化
+        $("#grid").kendoGrid({
+            scrollable: false,
+            filterable: true,
+            sortable: true,
+        });
+
+
         var empData = @Html.Raw(Json.Encode(ViewBag.empData2));
         var shipperData =@Html.Raw(Json.Encode(ViewBag.shipperData));
 
@@ -32,6 +40,7 @@
             dataSource: shipperData 
         });
     });
+    
 
     //$(function () {
     //$("#grid").kendoGrid({
@@ -99,10 +108,13 @@
 
     function deleteCol(e) {
         // prevent page scroll position change
+        // 終止預設行為(ex防止按下enter提交的動作,不允許點擊開啟所設置的url)
         e.preventDefault();
         // e.target is the DOM element representing the button
+        //獲取該行的dom
         var tr = $(e.target).closest("tr"); // get the current table row (tr)
         // get the data bound to the current table row
+        //獲取dom的row
         var data = this.dataItem(tr);
         var OrderID = data.OrderID;
         var aa = 123;
@@ -134,15 +146,11 @@
 
                 //寫在documentread內
                 $("#grid").kendoGrid({
-                    scrollable: false,
-                    filterable: true,
-                    sortable: true,
                     pageable: {
                         pageSize: 10,
                         pageSizes: true,
                     },
                     dataSource: msg,
-
                     columns: [
                                 {
                                     template: "<div style='text-align:center;'>#= ++record #</div>",

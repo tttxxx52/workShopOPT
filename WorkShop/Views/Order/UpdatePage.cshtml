@@ -226,7 +226,7 @@
                     var total = qty * price[item-1] ;
                     $('input[id="count'+count+'"]').val(total)
                     Total();
-                    
+                    Repeat (count)
                 }
             });
 
@@ -235,11 +235,16 @@
 
     });
 
+    
+
+
 
     $('#detailContent').on('click', '.btnRemove', function () {
         $(this).closest('tr').remove();
-
     });
+
+
+
     function AddNewDetail() {
         var trtemplate = $('#detailContent tr').eq(0).html();
        
@@ -268,24 +273,56 @@
             dataTextField: "Text",
             dataValueField: "Value",
             change: function(e) {
-                console.log(this.value());
                 var item = this.value();
                 var price = [];
                 var array = @Html.Raw(Json.Encode(@ViewBag.UnitPrice));
                 for (var i = 0;i<array.length;i++){
                     price[i] = array[i].Value;
                 }
-                console.log(price[item-1]);
                 $('#UnitPrice'+count+'').val(price[item-1]);
                 var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
                 var total = qty * price[item-1] ;
                 $('input[id="count'+count+'"]').val(total)
                 Total();
+                Repeat (count)
             }
         });
-
-
     }
+
+
+    function Repeat (count){
+        console.log(count);
+        if( $('#detailContent tr').length > 1){
+            var decideRepeatVal = new Array();
+            for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
+                var repeatVal = $('#DropdowmListProduct'+(i)+' :selected').val();
+                decideRepeatVal[i] = repeatVal ;
+                console.log( decideRepeatVal[i]);
+                for(j=0 ; j < decideRepeatVal.length;j++){
+                    for(var k=j+1;k<decideRepeatVal.length;k++){
+
+                        if (decideRepeatVal[j] == "" ){
+                            console.log("不理他");
+                            return;
+                        }
+                        else if(decideRepeatVal[j]==decideRepeatVal[k]){
+                            console.log("重複");
+                            alert("商品重複，請確認");
+                            debugger;
+                            $('#UnitPrice'+count+'').val("")
+                            $('#OrderDetails_0__Qty'+count+'').val("")
+                            $('#count'+count+'').val("")
+                            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
+
+                            return;
+                        }
+                    }
+         
+                }
+            }   
+        }
+    }
+
 
     function GetPrice(item) {
         var price = [];
@@ -317,10 +354,7 @@
         var countArray = [];
         var total = 0;
         for(var i=0;i<$('#detailContent tr').length;i++){
-            a = parseInt($('input[id="count'+i+'"]').val());
-            
-            debugger;
-  
+            a = parseInt($('input[id="count'+i+'"]').val()); 
             total += a;
         }
 
