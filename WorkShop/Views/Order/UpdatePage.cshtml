@@ -25,7 +25,7 @@
                     @Html.LabelFor(model => model.OrderID)
                 </td>
                 <td colspan="4">
-                    @Html.TextBoxFor(model => model.OrderID, new { Value = ViewBag.orderData.OrderID , @class = "k-textbox" })
+                    @Html.TextBoxFor(model => model.OrderID, new { Value = ViewBag.orderData.OrderID , @class = "k-textbox" , required = "required" })
                 </td>
             </tr>
             <tr>
@@ -33,7 +33,7 @@
                     @Html.LabelFor(model => model.CustomerName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, "請選擇")
+                    @Html.DropDownListFor(model => model.CustomerID, (List<SelectListItem>)ViewBag.customerData, "請選擇", new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -41,7 +41,7 @@
                     @Html.LabelFor(model => model.EmployeeName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty)
+                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty, new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -49,13 +49,13 @@
                     @Html.LabelFor(model => model.OrderDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.OrderDate, new { @type = "date", Value = ViewBag.OrderDate })
+                    @Html.TextBoxFor(model => model.OrderDate, new { @type = "date", Value = ViewBag.OrderDate, required = "required" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.RequiredDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", Value = ViewBag.RequiredDate, @data_greaterdate_msg = "error" })
+                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", Value = ViewBag.RequiredDate, @data_greaterdate_msg = "error", required = "required" })
                 </td>
             </tr>
             <tr>
@@ -63,13 +63,13 @@
                     @Html.LabelFor(model => model.ShippedDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date", Value = ViewBag.ShippedDate, @data_greaterdate_msg = "error" })
+                    @Html.TextBoxFor(model => model.ShippedDate, new { @type = "date", Value = ViewBag.ShippedDate, @data_greaterdate_msg = "error", required = "required" })
                 </td>
                 <td>
                     @Html.LabelFor(model => model.ShipperName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty)
+                    @Html.DropDownListFor(model => model.ShipperID, (List<SelectListItem>)ViewBag.shipperData, string.Empty, new { required = "required" })
                 </td>
             </tr>
             <tr>
@@ -149,7 +149,7 @@
                 @for (int i = 0; i < ViewBag.OrderDetails.Count; i++)
                 {
                     <tr>
-                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], "請選擇", new { @id = "DropdowmListProduct"+i })</td>
+                        <td>@Html.DropDownListFor(model => Model.OrderDetails[i].ProductID, (List<SelectListItem>)ViewBag.productData[i], "請選擇", new { @id = "DropdowmListProduct"+i , required = "required" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].UnitPrice, new { @class = "k-textbox", id = "UnitPrice" + i , Value = ViewBag.OrderDetails[i].UnitPrice, onchange = "ChangePrice(this)" })</td>
                         <td>@Html.TextBoxFor(model => Model.OrderDetails[i].Qty, new { @class = "k-textbox" , Value = ViewBag.OrderDetails[i].Qty,id= "OrderDetails_0__Qty"+i, onchange = "Count(this)" })</td>
                         @{
