@@ -55,6 +55,7 @@
                     price[i] = array[i].Value;
                 }
                 $("#UnitPrice0").val(price[item-1]);
+                $('#OrderDetails_0__Qty0').val(0)
                 var qty = parseInt($('input[id="OrderDetails_0__Qty0"]').val());
                 var total = qty * price[item-1] ;
                 $('input[id="count0"]').val(total)
@@ -131,32 +132,12 @@
                     price[i] = array[i].Value;
                 }
                 $('#UnitPrice'+count+'').val(price[item-1]);
+                $('#OrderDetails_0__Qty'+count+'').val(0)
                 var qty = parseInt($('input[id="OrderDetails_0__Qty'+count+'"]').val());
                 var total = qty * price[item-1] ;
                 $('input[id="count'+count+'"]').val(total)
                 Total();
                 Repeat (count)
-                //var val = $('#DropdowmListProduct0 :selected').val();
-                //for (var i =0 ; i <  $('#detailContent tr').length; i++ ){
-                //    if (val == $('#DropdowmListProduct'+(i+1)+' :selected').val() ){
-                //        alert("商品重複")
-                //        repeat = 1;
-                //     if (repeat = 1){
-                            
-                //            $('#UnitPrice'+count+'').val("")
-                //            $('#OrderDetails_0__Qty'+count+'').val("")
-                //            $('#count'+count+'').val("")
-                //            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
-                //            console.log(count);
-                //            repeat = 0 ;
-                //            break
-                //        }
-                //    }
-                //}
-    
-                                            
-                     
-
                 }            
         });
 
