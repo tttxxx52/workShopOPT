@@ -20,8 +20,9 @@
         var validator = $("#insertForm").kendoValidator();
 
         //日期驗證
-        $("#RequiredDate").attr("data-greaterdate-field","OrderDate");
-        $("#RequiredDate").attr("data-greaterdate-msg","error");
+ 
+        $("#ShippedDate").attr("data-greaterdate-msg","error");
+
 
         $("#CustomerID").kendoDropDownList({
             dataTextField: "Text",
@@ -82,16 +83,15 @@
 
     });
 
-
+    //日期驗證
    $(function () {
        var container = $("#insertForm");
-        kendo.init(container);
         container.kendoValidator({
             rules: {
                 greaterdate: function (input) {
                     if (input.is("[data-greaterdate-msg]") && input.val() != "") {                                    
                         var date = kendo.parseDate(input.val()),
-                            otherDate = kendo.parseDate($("[name='" + input.data("greaterdateField") + "']").val());
+                            otherDate = kendo.parseDate($("[name=OrderDate]").val());
                         return otherDate == null || otherDate.getTime() < date.getTime();
                     }
 
@@ -150,7 +150,7 @@
 
 
     }
-
+    //重複驗證
     function Repeat (count){
         console.log(count);
         if( $('#detailContent tr').length > 1){
@@ -170,11 +170,11 @@
                             console.log("重複");
                             alert("商品重複，請確認");
                             debugger;
-                            $('#UnitPrice'+count+'').val("")
-                            $('#OrderDetails_0__Qty'+count+'').val("")
-                            $('#count'+count+'').val("")
-                            $('#DropdowmListProduct'+count+' option[value=""]').attr('selected', 'selected');
-
+                            $('#UnitPrice'+count+'').val("");
+                            $('#OrderDetails_0__Qty'+count+'').val("");
+                            $('#count'+count+'').val("");
+                            $('#DropdowmListProduct'+count).data("kendoDropDownList").select(0);
+             
                             return;
                         }
                     }
@@ -257,7 +257,7 @@
                     @Html.LabelFor(model => model.EmployeeName)
                 </td>
                 <td colspan="4">
-                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty, new { required = "required" })
+                    @Html.DropDownListFor(model => model.EmployeeID, (List<SelectListItem>)ViewBag.empData, string.Empty, new { required = "required"})
                 </td>
             </tr>
             <tr>
@@ -271,7 +271,7 @@
                     @Html.LabelFor(model => model.RequiredDate)
                 </td>
                 <td>
-                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", required = "required" })
+                    @Html.TextBoxFor(model => model.RequiredDate, new { @type = "date", required = "required",  @data_greaterdate_msg = "error" })
                     <span data-for='RequiredDate' class='k-invalid-msg'></span>
                 </td>
             </tr>
