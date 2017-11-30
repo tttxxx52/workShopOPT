@@ -11,8 +11,9 @@ namespace WorkShop.Models
 
     public class Order
     {
+
         /// <summary>
-        /// 訂單編號
+        /// 訂單編號1
         /// </summary>
         [DisplayName("訂單編號")]
         public int OrderID { get; set; }
