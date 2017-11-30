@@ -10,7 +10,7 @@ namespace WorkShop.Models
     public class OrderService
     {
         /// <summary>
-        /// 連結資料庫
+        /// 連結資料庫1
         /// </summary>
         /// <returns></returns>
         private string GetDBConnectionString()
