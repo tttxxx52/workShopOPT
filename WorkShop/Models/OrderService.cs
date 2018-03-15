@@ -11,7 +11,7 @@ namespace WorkShop.Models
     {
         /// <summary>
         /// 連結資料庫1
-        /// </summary>
+        /// </summary>1
         /// <returns></returns>
         private string GetDBConnectionString()
         {
