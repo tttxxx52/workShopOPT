@@ -16,7 +16,6 @@
             sortable: true,
         });
 
-
         var empData = @Html.Raw(Json.Encode(ViewBag.empData2));
         var shipperData =@Html.Raw(Json.Encode(ViewBag.shipperData));
 
@@ -24,7 +23,7 @@
         $("#OrderDate").kendoDatePicker();
         $("#ShippedDate").kendoDatePicker();
         $("#RequiredDate").kendoDatePicker();
-        debugger;
+      
  
         $("#EmployeeID").kendoDropDownList({
                 dataTextField: "Text",
@@ -42,52 +41,94 @@
     });
     
 
-    //$(function () {
-    //$("#grid").kendoGrid({
-    //    columns: [
-    //      { field: "name" },
-    //      { field: "age" }
-    //    ],
-    //    filterable: true
-    //    });
-    //});
-    //document.ready(function () {
-    //});
+ 
     function Submit() {
         $.ajax({
             url: "/Order/GetData",
             type: "POST",
             data: $('#orderForm').serialize(), //傳直到/order/getdata
-            dataType: "JSON",       
-            success: function (msg) {                
-                $('#resultTable').children().remove();
-                $('#resultTable').append("<tr><td>訂單編號</td><td>客戶名稱</td><td>訂購日期</td><td>出貨日期</td><td></td><td></td></tr>");
-                var date;
-                $.each(msg, function (i, item) {
-                    $('#resultTable').append("<tr><td value=" + item.OrderID + ">" + item.OrderID + "</td><td>" + item.CustomerName +
-                                                "</td><td>" + item.OrderDate + "</td><td>" + item.ShippedDate + "</td><td><input type= button  onclick= location.href='/Order/UpdatePage?OrderID=" + item.OrderID + "'; value= " + "修改" + "></td><td><input type= button class = deleteData onclick=DoDelete(" + item.OrderID + ") value= " + "刪除" + "></td></tr>");
+            dataType: "JSON",
+            success: function (msg) {
+                $("#grid").kendoGrid({
+                    pageable: {
+                        pageSize: 10,
+                        pageSizes: true,
+                    },
+                    dataSource: msg,
+                    columns: [
+                        {
+                            template: "<div style='text-align:center;'>#= ++record #</div>",
+                            attributes: { style: "text-align:center" },
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                            attributes: { style: "text-align:center" },
+                            width: 40,
+                            title: "序號"
+                        },
+                        {
+                            field: "OrderID",
+                            title: "訂單編號",
+                            width: 180,
+                            attributes: { style: "text-align:center" },
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                        },
+                        {
+                            field: "CustomerName",
+                            title: "客戶名稱",
+                            attributes: { style: "text-align:center" },
+                            width: 120,
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" }
+                        },
+                        {
+                            field: "OrderDate",
+                            title: "訂購日期",
+                            attributes: { style: "text-align:center" },
+                            width: 100,
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" }
+                        },
+                        {
+                            field: "ShippedDate",
+                            title: "出貨日期",
+                            attributes: { style: "text-align:center" },
+                            width: 180,
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" }
+                        },
+
+
+                        {
+                            command: {
+                                text: "修改",
+                                click: updataCol,
+                            },
+                            attributes: { style: "text-align:center" },
+                            width: 180,
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                            title: "修改",
+                        },
+
+                        {
+                            command: {
+                                text: "刪除",
+                                click: deleteCol,
+                            },
+                            attributes: { style: "text-align:center" },
+                            width: 180,
+                            headerAttributes: { style: "text-align:center;vertical-align:middle" },
+                            title: "刪除",
+                        }
+                    ],
+                    //record製作Grid的序號
+                    dataBinding: function () {
+                        record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
+                    }
                 });
             },
             error: function (xhr) {
                 alert(xhr.status);
             }
         });
-
-
-
         document.getElementById("resultDiv").style.display = "";
     }
-    function DoDelete(OrderID) {
-        $.ajax({
-            url: "/Order/DoDelete",
-            type: "Get",
-            data: { OrderID},
-            });
 
-        $('#resultTable').on('click', '.deleteData', function () {
-            $(this).closest('tr').remove();
-        });
-    }
 
     function updataCol(e) {
         // prevent page scroll position change
@@ -117,112 +158,12 @@
         //獲取dom的row
         var data = this.dataItem(tr);
         var OrderID = data.OrderID;
-        var aa = 123;
         $.ajax({
-            url: "/Order/DoDelete?OrderID=" + OrderID + "&B=" + aa,
-            type: "Get"
-            // data: {OrderID},
+            url: "/Order/DoDelete" ,
+            type: "Get",
+            data: {OrderID},
         });
         $(tr).remove();
-    }
-
-
-    function go() {
-        $.ajax({
-            url: "/Order/GetData",
-            type: "POST",
-            data: $('#orderForm').serialize(), //傳直到/order/getdata
-            dataType: "JSON",
-            success: function (msg) {
-                 debugger;
-                //$("#grid").kendoGrid({
-                //    columns: [
-                //      { field: "name" },
-                //      { field: "age" }
-                //    ],
-                //    filterable: true,
-                //    dataSource: [{ name: "Jane", age: 30 }, { name: "John", age: 33 }]
-                //});
-
-                //寫在documentread內
-                $("#grid").kendoGrid({
-                    pageable: {
-                        pageSize: 10,
-                        pageSizes: true,
-                    },
-                    dataSource: msg,
-                    columns: [
-                                {
-                                    template: "<div style='text-align:center;'>#= ++record #</div>",
-                                    attributes: { style: "text-align:center" },
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" },
-                                    attributes: { style: "text-align:center" },
-                                    width: 40,
-                                    title: "序號"
-                                },
-                                {
-                                    field: "OrderID",
-                                    title: "訂單編號",
-                                    width: 180,
-                                    attributes: { style: "text-align:center" },
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" },
-                                },
-                                {
-                                    field: "CustomerName",
-                                    title: "客戶名稱",
-                                    attributes: { style: "text-align:center" },
-                                    width: 120,
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" }
-                                },
-                                {
-                                    field: "OrderDate",
-                                    title: "訂購日期",
-                                    attributes: { style: "text-align:center" },
-                                    width: 100,
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" }
-                                },
-                                {
-                                    field: "ShippedDate",
-                                    title: "出貨日期",
-                                    attributes: { style: "text-align:center" },
-                                    width: 180,
-                                    headerAttributes: { style: "text-align:center;vertical-align:middle" }
-                                },
-
-
-                            {
-                                command: {
-                                    text: "修改",
-                                    click: updataCol,
-                                },
-                                attributes: { style: "text-align:center" },
-                                width: 180,
-                                headerAttributes: { style: "text-align:center;vertical-align:middle" },
-                                title: "修改",
-                            },
-
-                               {
-                                   command: {
-                                       text: "刪除",
-                                       click: deleteCol,
-                                   },
-                                   attributes: { style: "text-align:center" },
-                                   width: 180,
-                                   headerAttributes: { style: "text-align:center;vertical-align:middle" },
-                                   title: "刪除",
-                               }
-                    ],
-                    //record製作Grid的序號
-                    dataBinding: function () {
-                        record = (this.dataSource.page() - 1) * this.dataSource.pageSize();
-                    }
-                });
-            },
-            error: function (xhr) {
-                alert(xhr.status);
-            }
-        });
-        document.getElementById("resultDiv").style.display = "";
     }
 
 </script>
@@ -265,7 +206,6 @@
                 <td></td>
                 <td colspan="4">
                     <input type="button" value="查詢" onclick="Submit()" class="k-button">
-                    <input type="button" value="go" onclick="go()" class="k-button">
                     <input type="reset" value="清除" onclick="Back()" class="k-button" >
                     <input type="reset" value="新增" class="k-button" onclick= location.href='/Order/InsertPage' >
                 </td>
@@ -283,6 +223,5 @@
 
     </div>
 
-    //<a href="/Order/InsertPage">新增訂單</a>
 }
 
