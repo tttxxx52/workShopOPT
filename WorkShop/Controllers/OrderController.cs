@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using WorkShop.Models;
 using WorkShop.Result;
+using WorkShop.ModelService;
 
 namespace WorkShop.Controllers
 {
@@ -14,7 +15,7 @@ namespace WorkShop.Controllers
         // GET: Order
         public ActionResult Index()
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
             List<Models.Order> dataList = orderService.GetEmployeeData();
             List<SelectListItem> employeeList = new List<SelectListItem>();
             List<SelectListItem> shipperList = new List<SelectListItem>();
@@ -55,7 +56,7 @@ namespace WorkShop.Controllers
         [HttpPost()]
         public CustJsonResult GetData(Models.Order order)
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
             List<Models.Order> list = orderService.SearchOrder(order);       
             //var A= this.Json(list);
             //return A;
@@ -71,7 +72,7 @@ namespace WorkShop.Controllers
         [HttpGet]
         public ActionResult DoDelete(string OrderID)
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
             orderService.DeleteOrderById(OrderID);
             return RedirectToAction("Index");
         }
@@ -82,7 +83,7 @@ namespace WorkShop.Controllers
         /// <returns></returns>
         public ActionResult InsertPage()
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
 
             List<Models.Order> dataList = orderService.GetEmployeeData();
             List<Models.OrderDetails> ProductList = orderService.GetProductData();
@@ -164,7 +165,7 @@ namespace WorkShop.Controllers
         public ActionResult DoInsert(Models.Order order)
         {
 
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
             orderService.InsertOrder(order);
             return RedirectToAction("Index");
         }
@@ -176,7 +177,7 @@ namespace WorkShop.Controllers
         /// <returns></returns>
         public ActionResult UpdatePage(string OrderID)
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
 
             List<Models.Order> dataList = orderService.GetEmployeeData();
             List<Models.OrderDetails> ProductList = orderService.GetProductData();
@@ -289,7 +290,7 @@ namespace WorkShop.Controllers
         [HttpPost]
         public ActionResult DoUpdate(Models.Order order)
         {
-            Models.OrderService orderService = new Models.OrderService();
+            ModelService.OrderService orderService = new ModelService.OrderService();
             orderService.UpdateOrderById(order);
             return RedirectToAction("Index");
         }
