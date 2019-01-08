@@ -296,40 +296,56 @@ namespace WorkShop.ModelService
                          )
                          ";
 
-            string OrderID;
+            string OrderID = "";
             using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                SqlCommand cmd2 = new SqlCommand(sql2, conn);
-                cmd.Parameters.Add(new SqlParameter("@CustomerID", order.CustomerID));
-                cmd.Parameters.Add(new SqlParameter("@EmployeeID", order.EmployeeID));
-                cmd.Parameters.Add(new SqlParameter("@OrderDate", order.OrderDate == null ? (object)DBNull.Value : order.OrderDate));
-                cmd.Parameters.Add(new SqlParameter("@RequiredDate", order.RequiredDate == null ? (object)DBNull.Value : order.RequiredDate));
-                cmd.Parameters.Add(new SqlParameter("@ShippedDate", order.ShippedDate == null ? (object)DBNull.Value : order.ShippedDate));
-                cmd.Parameters.Add(new SqlParameter("@ShipperID", order.ShipperID));
-                cmd.Parameters.Add(new SqlParameter("@Freight", order.Freight ?? string.Empty));
-                cmd.Parameters.Add(new SqlParameter("@ShipCountry", order.ShipCountry ?? string.Empty));
-                cmd.Parameters.Add(new SqlParameter("@ShipCity", order.ShipCity ?? string.Empty));
-                cmd.Parameters.Add(new SqlParameter("@ShipRegion", order.ShipRegion == null ? (object)DBNull.Value : order.ShipRegion));
-                cmd.Parameters.Add(new SqlParameter("@ShipPostalCode", order.ShipPostalCode == null ? (object)DBNull.Value : order.ShipPostalCode));
-                cmd.Parameters.Add(new SqlParameter("@ShipAddress", order.ShipAddress ?? string.Empty));
-                cmd.Parameters.Add(new SqlParameter("@ShipName", order.ShipName ?? string.Empty));
-
-                OrderID = cmd.ExecuteScalar().ToString();
-
-                for (int i = 0; i < order.OrderDetails.Count; i++)
+                SqlTransaction tran = conn.BeginTransaction();
+                try
                 {
-                    cmd2 = new SqlCommand(sql2, conn);
-                    cmd2.Parameters.Add(new SqlParameter("@OrderID", OrderID));
-                    cmd2.Parameters.Add(new SqlParameter("@ProductID", order.OrderDetails[i].ProductID));
-                    cmd2.Parameters.Add(new SqlParameter("@UnitPrice", order.OrderDetails[i].UnitPrice));
-                    cmd2.Parameters.Add(new SqlParameter("@Qty", order.OrderDetails[i].Qty));
-                    cmd2.Parameters.Add(new SqlParameter("@Discount", order.OrderDetails[i].Discount));
-                    cmd2.ExecuteNonQuery();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Transaction = tran;
+                    SqlCommand cmd2 = new SqlCommand(sql2, conn);
+                    cmd2.Transaction = tran;
+
+                    cmd.Parameters.Add(new SqlParameter("@CustomerID", order.CustomerID));
+                    cmd.Parameters.Add(new SqlParameter("@EmployeeID", order.EmployeeID));
+                    cmd.Parameters.Add(new SqlParameter("@OrderDate", order.OrderDate == null ? (object)DBNull.Value : order.OrderDate));
+                    cmd.Parameters.Add(new SqlParameter("@RequiredDate", order.RequiredDate == null ? (object)DBNull.Value : order.RequiredDate));
+                    cmd.Parameters.Add(new SqlParameter("@ShippedDate", order.ShippedDate == null ? (object)DBNull.Value : order.ShippedDate));
+                    cmd.Parameters.Add(new SqlParameter("@ShipperID", order.ShipperID));
+                    cmd.Parameters.Add(new SqlParameter("@Freight", order.Freight ?? string.Empty));
+                    cmd.Parameters.Add(new SqlParameter("@ShipCountry", order.ShipCountry ?? string.Empty));
+                    cmd.Parameters.Add(new SqlParameter("@ShipCity", order.ShipCity ?? string.Empty));
+                    cmd.Parameters.Add(new SqlParameter("@ShipRegion", order.ShipRegion == null ? (object)DBNull.Value : order.ShipRegion));
+                    cmd.Parameters.Add(new SqlParameter("@ShipPostalCode", order.ShipPostalCode == null ? (object)DBNull.Value : order.ShipPostalCode));
+                    cmd.Parameters.Add(new SqlParameter("@ShipAddress", order.ShipAddress ?? string.Empty));
+                    cmd.Parameters.Add(new SqlParameter("@ShipName", order.ShipName ?? string.Empty));
+
+                    OrderID = cmd.ExecuteScalar().ToString();
+
+                    for (int i = 0; i < order.OrderDetails.Count; i++)
+                    {
+                        cmd2.Parameters.Add(new SqlParameter("@OrderID", OrderID));
+                        cmd2.Parameters.Add(new SqlParameter("@ProductID", order.OrderDetails[i].ProductID));
+                        cmd2.Parameters.Add(new SqlParameter("@UnitPrice", order.OrderDetails[i].UnitPrice));
+                        cmd2.Parameters.Add(new SqlParameter("@Qty", order.OrderDetails[i].Qty));
+                        cmd2.Parameters.Add(new SqlParameter("@Discount", order.OrderDetails[i].Discount));
+                        cmd2.ExecuteNonQuery();
+                        cmd2.Parameters.Clear();
+                    }
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                }
+                finally
+                {
+                    conn.Close();
                 }
 
-                conn.Close();
             }
             return OrderID;
         }
@@ -421,7 +437,6 @@ namespace WorkShop.ModelService
                 }
                 catch (Exception ex)
                 {
-                    var aa = ex;
                     tran.Rollback();
                 }
                 finally
@@ -538,30 +553,44 @@ namespace WorkShop.ModelService
         /// </summary>
         public void DeleteOrderById(string OrderID)
         {
-            try
-            {
-                string sql = @"DELETE
+
+            string sql = @"DELETE
                                FROM Sales.OrderDetails
                                Where OrderID = @OrderID";
-                string sql2 = @"DELETE
+            string sql2 = @"DELETE
                                FROM Sales.Orders
                                Where OrderID = @OrderID";
-                using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
                 {
-                    conn.Open();
+
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     SqlCommand cmd2 = new SqlCommand(sql2, conn);
+                    cmd.Transaction = tran;
+                    cmd2.Transaction = tran;
                     cmd.Parameters.Add(new SqlParameter("OrderID", OrderID));
                     cmd.ExecuteNonQuery();
                     cmd2.Parameters.Add(new SqlParameter("OrderID", OrderID));
                     cmd2.ExecuteNonQuery();
+                    
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                }
+                finally
+                {
                     conn.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+
+
         }
 
     }
