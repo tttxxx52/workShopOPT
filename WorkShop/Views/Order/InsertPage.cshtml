@@ -202,7 +202,7 @@
         $(item).parent().next('td').children().val(price[item.value-1]);
     }
 
-    function Count(item){
+    function Count(item) {
         var unitprice = $(item).parent().prev('td').children().val();
         var qty = $(item).closest("input:text").val();
         var count = unitprice * qty;

@@ -146,6 +146,7 @@
                 <td></td>
             </tr>
             <tbody id="detailContent">
+           
                 @for (int i = 0; i < ViewBag.OrderDetails.Count; i++)
                 {
                     <tr>
@@ -350,7 +351,7 @@
         $(item).parent().next('td').children().val(price[item.value-1]);
     }
 
-    function Count(item){
+    function Count(item) {
         var unitprice = $(item).parent().prev('td').children().val();
         var qty = $(item).closest("input:text").val();
         var count = unitprice * qty;
