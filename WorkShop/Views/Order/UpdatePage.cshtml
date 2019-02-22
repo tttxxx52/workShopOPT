@@ -130,7 +130,7 @@
                 <td></td>
                 <td colspan="4">
                     <input type="submit" value="存檔"class="k-button">
-                    <input type="button" value="刪除本筆訂單" onclick="location.href='/GetOrder/DoDelete?OrderID=@ViewBag.orderData.OrderID'"class="k-button">
+                    <input type="button" value="刪除本筆訂單" onclick="location.href='/Order/DoDelete?OrderID=@ViewBag.orderData.OrderID'"class="k-button">
                     <input type="button" onclick="location.href='./Index';" value="回前一頁"class="k-button" />
                 </td>
             </tr>
@@ -380,17 +380,12 @@
 
     function DoDelete(OrderID) {
         $.ajax({
-            url: "/GetOrder/DoDelete",
+            url: "/Order/DoDelete",
             type: "POST",
             data: { OrderID: OrderID },
         });
     }
-    function DoDeleteDetials(ProductID){
-        $.ajax({
-            url: "/GetOrder/DoDeleteDetial",
-            type: "POST",
-            data: { ProductID: ProductID },
-        });
+
     }
 
 </script>
